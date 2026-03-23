@@ -52,6 +52,8 @@ interface EmployeeForm {
     panNumber: string;
     bankAccount: string;
     bankIfsc: string;
+    licenceNumber: string;
+    licenceExpiry: string;
     isActive: boolean;
 }
 
@@ -67,6 +69,8 @@ const EMPTY_FORM: EmployeeForm = {
     panNumber: "",
     bankAccount: "",
     bankIfsc: "",
+    licenceNumber: "",
+    licenceExpiry: "",
     isActive: true,
 };
 
@@ -104,6 +108,8 @@ export function EmployeeMaster() {
             panNumber: emp.panNumber ?? "",
             bankAccount: emp.bankAccount ?? "",
             bankIfsc: emp.bankIfsc ?? "",
+            licenceNumber: emp.licenceNumber ?? "",
+            licenceExpiry: emp.licenceExpiry ? emp.licenceExpiry.toDate().toISOString().split("T")[0] : "",
             isActive: emp.isActive,
         });
         setOpen(true);
@@ -126,6 +132,8 @@ export function EmployeeMaster() {
                 panNumber: form.panNumber.trim() || null,
                 bankAccount: form.bankAccount.trim() || null,
                 bankIfsc: form.bankIfsc.trim() || null,
+                licenceNumber: form.licenceNumber.trim() || null,
+                licenceExpiry: form.licenceExpiry ? Timestamp.fromDate(new Date(form.licenceExpiry)) : null,
                 documentUrls: editing?.documentUrls ?? [],
                 isActive: form.isActive,
                 createdBy: user?.uid || "",
@@ -166,7 +174,7 @@ export function EmployeeMaster() {
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-sand-50 border-b border-sand-100">
-                            {["Name", "Designation", "Type", "Joining Date", "Salary/Wage", "Status", ""].map((h) => (
+                            {["Name", "Designation", "Type", "Joining Date", "Salary/Wage", "Licence Expiry", "Status", ""].map((h) => (
                                 <TableHead key={h} className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</TableHead>
                             ))}
                         </TableRow>
@@ -174,7 +182,7 @@ export function EmployeeMaster() {
                     <TableBody>
                         {filtered.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={7} className="text-center py-8 text-sm text-muted-foreground">No employees found.</TableCell>
+                                <TableCell colSpan={8} className="text-center py-8 text-sm text-muted-foreground">No employees found.</TableCell>
                             </TableRow>
                         )}
                         {filtered.map((emp) => (
@@ -187,6 +195,16 @@ export function EmployeeMaster() {
                                 <TableCell><Badge variant="outline" className="text-xs">{TYPE_LABELS[emp.type]}</Badge></TableCell>
                                 <TableCell className="font-mono text-sm">{emp.joiningDate.toDate().toLocaleDateString("en-IN")}</TableCell>
                                 <TableCell className="font-mono text-sm">₹{emp.salaryOrWage.toLocaleString("en-IN")}</TableCell>
+                                <TableCell className="font-mono text-sm">
+                                    {emp.licenceExpiry ? (() => {
+                                        const expDate = emp.licenceExpiry.toDate();
+                                        const daysLeft = Math.ceil((expDate.getTime() - Date.now()) / 86400000);
+                                        const str = expDate.toLocaleDateString("en-IN");
+                                        if (daysLeft < 0) return <span className="text-red-600 font-semibold">{str} (Expired)</span>;
+                                        if (daysLeft <= 30) return <span className="text-orange-600 font-semibold">{str} ({daysLeft}d left)</span>;
+                                        return <span>{str}</span>;
+                                    })() : "—"}
+                                </TableCell>
                                 <TableCell>
                                     <Badge className={`${emp.isActive ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"} text-xs`}>
                                         {emp.isActive ? "Active" : "Inactive"}
@@ -259,6 +277,14 @@ export function EmployeeMaster() {
                             <div className="space-y-1">
                                 <Label>Bank IFSC</Label>
                                 <Input value={form.bankIfsc} maxLength={11} onChange={(e) => setForm({ ...form, bankIfsc: e.target.value.toUpperCase() })} placeholder="SBIN0012345" />
+                            </div>
+                            <div className="space-y-1">
+                                <Label>Licence Number</Label>
+                                <Input value={form.licenceNumber} onChange={(e) => setForm({ ...form, licenceNumber: e.target.value.toUpperCase() })} placeholder="DL / certificate no." />
+                            </div>
+                            <div className="space-y-1">
+                                <Label>Licence Expiry Date</Label>
+                                <Input type="date" value={form.licenceExpiry} onChange={(e) => setForm({ ...form, licenceExpiry: e.target.value })} />
                             </div>
                             <div className="flex items-center gap-2 col-span-2 pt-1">
                                 <Switch checked={form.isActive} onCheckedChange={(v: boolean) => setForm({ ...form, isActive: v })} id="active-toggle" />

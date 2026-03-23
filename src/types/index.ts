@@ -287,6 +287,8 @@ export interface Employee {
     panNumber?: string;
     bankAccount?: string;
     bankIfsc?: string;
+    licenceNumber?: string;
+    licenceExpiry?: Timestamp;
     documentUrls: string[]; // Firebase Storage URLs
     isActive: boolean;
     createdAt: Timestamp;

@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Timestamp } from "firebase/firestore";
-import type { InwardEntry, LooseSale, BagSale, ProductionEntry, PurchaseRegisterEntry, ExpenseEntry, BaggingEntry } from "@/types";
+import type { InwardEntry, LooseSale, BagSale, ProductionEntry, PurchaseRegisterEntry, ExpenseEntry, BaggingEntry, DailyClosingStock, Employee } from "@/types";
 import { collectionListener } from "@/lib/firestore";
-import { ArrowDownToLine, TrendingUp, Factory, Package, Banknote, ShoppingCart, Receipt, BarChart2, TrendingDown, Layers, Flame } from "lucide-react";
+import { ArrowDownToLine, TrendingUp, Factory, Package, Banknote, ShoppingCart, Receipt, BarChart2, TrendingDown, Layers, Flame, AlertTriangle, CheckCircle } from "lucide-react";
 
 function isToday(ts: Timestamp) {
     const d = ts.toDate();
@@ -70,6 +70,8 @@ export function DashboardOverview() {
     const [baggings, setBaggings] = useState<BaggingEntry[]>([]);
     const [purchases, setPurchases] = useState<PurchaseRegisterEntry[]>([]);
     const [expenses, setExpenses] = useState<ExpenseEntry[]>([]);
+    const [closingStocks, setClosingStocks] = useState<DailyClosingStock[]>([]);
+    const [employees, setEmployees] = useState<Employee[]>([]);
 
     useEffect(() => collectionListener<InwardEntry>("inwardEntries", "date", setInwards), []);
     useEffect(() => collectionListener<LooseSale>("looseSales", "date", setLooseSales), []);
@@ -78,6 +80,8 @@ export function DashboardOverview() {
     useEffect(() => collectionListener<BaggingEntry>("baggings", "date", setBaggings), []);
     useEffect(() => collectionListener<PurchaseRegisterEntry>("purchaseRegister", "date", setPurchases), []);
     useEffect(() => collectionListener<ExpenseEntry>("expenses", "date", setExpenses), []);
+    useEffect(() => collectionListener<DailyClosingStock>("closingStock", "date", setClosingStocks, "desc"), []);
+    useEffect(() => collectionListener<Employee>("employees", "name", setEmployees), []);
 
     const todayInward = inwards.filter((r) => isToday(r.date));
     const todayInwardTons = todayInward.reduce((s, r) => s + r.netWeight, 0);
@@ -105,6 +109,33 @@ export function DashboardOverview() {
     const rawSandStock = totalSandIn - totalSandUsed;
     const coalStock = totalCoalIn - totalCoalUsed;
 
+    // Alerts: stock shortages from latest closing stock record
+    const latestClosing = closingStocks[0] ?? null;
+    const stockShortageAlerts = latestClosing
+        ? latestClosing.items.filter((it) => it.shortage > 0.05)
+        : [];
+
+    // Alerts: licence expiry (expired + expiring within 30 days)
+    const now = Date.now();
+    const licenceAlerts = employees
+        .filter((e) => e.isActive && e.licenceExpiry)
+        .map((e) => ({
+            name: e.name,
+            expiry: e.licenceExpiry!.toDate(),
+            daysLeft: Math.ceil((e.licenceExpiry!.toDate().getTime() - now) / 86400000),
+        }))
+        .filter((a) => a.daysLeft <= 30)
+        .sort((a, b) => a.daysLeft - b.daysLeft);
+
+    // Alerts: low raw material
+    const LOW_SAND = 50;
+    const LOW_COAL = 5;
+    const rawAlerts: { label: string; value: string; level: "warn" | "critical" }[] = [];
+    if (rawSandStock < LOW_SAND) rawAlerts.push({ label: "Raw Sand stock low", value: `${rawSandStock.toFixed(2)} T remaining`, level: rawSandStock < 20 ? "critical" : "warn" });
+    if (coalStock < LOW_COAL) rawAlerts.push({ label: "Coal stock low", value: `${coalStock.toFixed(2)} T remaining`, level: coalStock < 2 ? "critical" : "warn" });
+
+    const totalAlerts = stockShortageAlerts.length + licenceAlerts.length + rawAlerts.length;
+
     const recentInward = [...inwards].sort((a, b) => b.date.seconds - a.date.seconds).slice(0, 8);
 
     const today = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
@@ -118,6 +149,56 @@ export function DashboardOverview() {
                     <p className="text-[13px] text-gray-400 font-medium mt-0.5">{today}</p>
                 </div>
             </div>
+
+            {/* Alerts */}
+            {totalAlerts > 0 ? (
+                <div>
+                    <SectionHeader label={`Alerts (${totalAlerts})`} />
+                    <div className="space-y-2">
+                        {rawAlerts.map((a) => (
+                            <div key={a.label} className={`flex items-start gap-3 px-4 py-3 rounded-xl border text-sm ${a.level === "critical" ? "bg-red-50 border-red-200 text-red-800" : "bg-orange-50 border-orange-200 text-orange-800"}`}>
+                                <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+                                <div>
+                                    <span className="font-semibold">{a.label}</span>
+                                    <span className="ml-2 font-mono">{a.value}</span>
+                                </div>
+                            </div>
+                        ))}
+                        {stockShortageAlerts.map((it) => (
+                            <div key={it.itemId} className="flex items-start gap-3 px-4 py-3 rounded-xl border bg-yellow-50 border-yellow-200 text-yellow-800 text-sm">
+                                <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+                                <div>
+                                    <span className="font-semibold">Stock shortage — {it.itemName}</span>
+                                    <span className="ml-2 font-mono">{it.shortage.toFixed(3)} T system−physical</span>
+                                    {latestClosing && <span className="ml-2 text-xs text-yellow-600">(as of {latestClosing.date.toDate().toLocaleDateString("en-IN", { day: "2-digit", month: "short" })})</span>}
+                                </div>
+                            </div>
+                        ))}
+                        {licenceAlerts.map((a) => (
+                            <div key={a.name} className={`flex items-start gap-3 px-4 py-3 rounded-xl border text-sm ${a.daysLeft < 0 ? "bg-red-50 border-red-200 text-red-800" : "bg-orange-50 border-orange-200 text-orange-800"}`}>
+                                <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+                                <div>
+                                    <span className="font-semibold">
+                                        {a.daysLeft < 0 ? "Licence expired" : "Licence expiring soon"}
+                                        {" — "}{a.name}
+                                    </span>
+                                    <span className="ml-2 text-xs">
+                                        {a.daysLeft < 0
+                                            ? `Expired ${Math.abs(a.daysLeft)} day${Math.abs(a.daysLeft) !== 1 ? "s" : ""} ago`
+                                            : `Expires in ${a.daysLeft} day${a.daysLeft !== 1 ? "s" : ""}`}
+                                        {" "}({a.expiry.toLocaleDateString("en-IN")})
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ) : (
+                <div className="flex items-center gap-2 px-4 py-3 rounded-xl border border-green-100 bg-green-50 text-green-700 text-sm">
+                    <CheckCircle size={16} className="shrink-0" />
+                    <span className="font-medium">All clear — no active alerts</span>
+                </div>
+            )}
 
             {/* Today's stats */}
             <div>
