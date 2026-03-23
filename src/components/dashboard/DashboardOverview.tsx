@@ -18,16 +18,16 @@ function isThisMonth(ts: Timestamp) {
     return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
 }
 
-function StatCard({ label, value, sub, icon: Icon, color }: { label: string; value: string; sub?: string; icon: React.ElementType; color: string }) {
+function StatCard({ label, value, sub, icon: Icon, accent }: { label: string; value: string; sub?: string; icon: React.ElementType; accent: string }) {
     return (
-        <div className="bg-card rounded-xl border p-5 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
-            <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${color}`}>
-                <Icon size={22} className="text-white" />
+        <div className="card p-4 flex items-start gap-3">
+            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${accent}`}>
+                <Icon size={20} className="text-white" />
             </div>
             <div className="min-w-0">
-                <p className="text-[13px] font-semibold text-muted-foreground mb-1">{label}</p>
-                <p className="text-2xl font-bold text-foreground leading-tight tabular-nums">{value}</p>
-                {sub && <p className="text-[13px] text-muted-foreground mt-1">{sub}</p>}
+                <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-0.5">{label}</p>
+                <p className="text-xl font-semibold font-mono text-gray-900 leading-tight tabular-nums">{value}</p>
+                {sub && <p className="text-xs text-gray-500 mt-0.5">{sub}</p>}
             </div>
         </div>
     );
@@ -76,39 +76,39 @@ export function DashboardOverview() {
     return (
         <div className="space-y-6 max-w-6xl">
             <div>
-                <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-                <p className="text-[15px] text-muted-foreground mt-1">{today}</p>
+                <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+                <p className="text-sm text-gray-500 mt-0.5">{today}</p>
             </div>
 
             {/* Today */}
             <div>
-                <h2 className="text-[13px] font-bold text-muted-foreground uppercase tracking-widest mb-3">Today</h2>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <StatCard label="Inward" value={`${todayInwardTons.toFixed(2)} T`} sub={`${todayInward.length} vehicles`} icon={ArrowDownToLine} color="bg-blue-500" />
-                    <StatCard label="Production" value={`${todayProdTons.toFixed(2)} T`} sub={`${todayProduction.length} batches`} icon={Factory} color="bg-violet-500" />
-                    <StatCard label="Sales" value={`₹${todaySaleAmount.toLocaleString("en-IN")}`} sub={`${todayLooseSales.length + todayBagSales.length} invoices`} icon={TrendingUp} color="bg-emerald-500" />
-                    <StatCard label="Bagging" value={`${todayBags.toLocaleString("en-IN")} bags`} sub={`${todayBagging.length} batches`} icon={Package} color="bg-orange-500" />
+                <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Today</h2>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <StatCard label="Inward" value={`${todayInwardTons.toFixed(2)} T`} sub={`${todayInward.length} vehicles`} icon={ArrowDownToLine} accent="bg-green-600" />
+                    <StatCard label="Production" value={`${todayProdTons.toFixed(2)} T`} sub={`${todayProduction.length} batches`} icon={Factory} accent="bg-blue-600" />
+                    <StatCard label="Sales" value={`₹${todaySaleAmount.toLocaleString("en-IN")}`} sub={`${todayLooseSales.length + todayBagSales.length} invoices`} icon={TrendingUp} accent="bg-brand-600" />
+                    <StatCard label="Bagging" value={`${todayBags.toLocaleString("en-IN")} bags`} sub={`${todayBagging.length} batches`} icon={Package} accent="bg-amber-500" />
                 </div>
             </div>
 
             {/* This month */}
             <div>
-                <h2 className="text-[13px] font-bold text-muted-foreground uppercase tracking-widest mb-3">This Month</h2>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    <StatCard label="Revenue" value={`₹${monthRevenue.toLocaleString("en-IN")}`} icon={Banknote} color="bg-emerald-600" />
-                    <StatCard label="Purchases" value={`₹${monthPurchase.toLocaleString("en-IN")}`} icon={ShoppingCart} color="bg-amber-500" />
-                    <StatCard label="Expenses" value={`₹${monthExpenses.toLocaleString("en-IN")}`} icon={Receipt} color="bg-red-500" />
-                    <StatCard label="Net Profit" value={`₹${monthProfit.toLocaleString("en-IN")}`} icon={BarChart2} color={monthProfit >= 0 ? "bg-indigo-600" : "bg-red-600"} />
+                <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">This Month</h2>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <StatCard label="Revenue" value={`₹${monthRevenue.toLocaleString("en-IN")}`} icon={Banknote} accent="bg-green-700" />
+                    <StatCard label="Purchases" value={`₹${monthPurchase.toLocaleString("en-IN")}`} icon={ShoppingCart} accent="bg-orange-500" />
+                    <StatCard label="Expenses" value={`₹${monthExpenses.toLocaleString("en-IN")}`} icon={Receipt} accent="bg-red-500" />
+                    <StatCard label="Net Profit" value={`₹${monthProfit.toLocaleString("en-IN")}`} icon={BarChart2} accent={monthProfit >= 0 ? "bg-brand-600" : "bg-red-600"} />
                 </div>
             </div>
 
             {/* Recent inward */}
-            <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b">
-                    <h2 className="text-[15px] font-bold text-foreground">Recent Inward Entries</h2>
+            <div className="card overflow-hidden">
+                <div className="px-6 py-4 border-b border-sand-100">
+                    <h2 className="text-sm font-semibold text-gray-700">Recent Inward Entries</h2>
                 </div>
                 {recentInward.length === 0 ? (
-                    <div className="text-center py-12 text-[15px] text-muted-foreground">No inward entries yet.</div>
+                    <div className="text-center py-10 text-sm text-gray-400">No inward entries yet.</div>
                 ) : (
                     <div className="divide-y">
                         {recentInward.map((r) => (

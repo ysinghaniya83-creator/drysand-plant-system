@@ -34,16 +34,16 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen flex">
             {/* Left panel — branding */}
-            <div className="hidden lg:flex lg:w-[45%] flex-col justify-between bg-[#0f172a] p-12 relative overflow-hidden">
+            <div className="hidden lg:flex lg:w-[45%] flex-col justify-between bg-[#1c0a00] p-12 relative overflow-hidden">
                 {/* Background decoration */}
                 <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-indigo-600/20 blur-3xl" />
-                    <div className="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-indigo-500/10 blur-3xl" />
+                    <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-brand-600/20 blur-3xl" />
+                    <div className="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-brand-400/10 blur-3xl" />
                 </div>
 
                 {/* Logo */}
                 <div className="relative flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 shadow-lg shadow-indigo-900/50">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 shadow-lg">
                         <Factory size={20} className="text-white" />
                     </div>
                     <div>
@@ -81,7 +81,7 @@ export default function LoginPage() {
             <div className="flex flex-1 flex-col items-center justify-center px-6 bg-background">
                 {/* Mobile logo */}
                 <div className="flex lg:hidden items-center gap-3 mb-10">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600">
                         <Factory size={20} className="text-white" />
                     </div>
                     <div>
@@ -100,7 +100,7 @@ export default function LoginPage() {
                         <button
                             onClick={handleGoogleSignIn}
                             disabled={loading}
-                            className="group relative w-full flex items-center justify-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-[14px] font-medium text-foreground shadow-sm transition-all duration-150 hover:bg-accent hover:border-indigo-300 hover:shadow-md disabled:pointer-events-none disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                            className="group relative w-full flex items-center justify-center gap-3 rounded-xl border border-sand-200 bg-white px-4 py-3.5 text-sm font-medium text-gray-900 shadow-sm transition-all duration-150 hover:bg-sand-50 hover:border-brand-400 disabled:pointer-events-none disabled:opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
                         >
                             {!loading && (
                                 <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true" className="shrink-0">
@@ -111,7 +111,7 @@ export default function LoginPage() {
                                 </svg>
                             )}
                             {loading && (
-                                <svg className="animate-spin h-4 w-4 text-indigo-600 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg className="animate-spin h-4 w-4 text-brand-600 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                                 </svg>

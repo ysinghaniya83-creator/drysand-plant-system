@@ -251,7 +251,7 @@ function ReportTable({ headers, rows, totals }: { headers: string[]; rows: strin
                         </TableRow>
                     ))}
                     {totals && rows.length > 0 && (
-                        <TableRow className="bg-gray-50 font-semibold border-t-2">
+                        <TableRow className="bg-sand-50 font-semibold border-t-2">
                             {totals.map((cell, j) => (
                                 <TableCell key={j} className="text-sm font-mono font-bold">{cell}</TableCell>
                             ))}
