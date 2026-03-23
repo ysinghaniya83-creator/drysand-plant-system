@@ -45,23 +45,23 @@ export function RoyaltyLedger() {
                 )}
             </div>
 
-            <div className="border rounded-md overflow-hidden">
+            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-gray-900 hover:bg-gray-900">
-                            <TableHead className="text-white text-xs font-mono uppercase">Date</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">Vehicle</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">Material</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">Royalty #</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase text-right">Royalty Wt (T)</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase text-right">Bridge Wt (T)</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase text-right">Difference (T)</TableHead>
+                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Date</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Vehicle</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Material</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Royalty #</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Royalty Wt (T)</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Bridge Wt (T)</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Difference (T)</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {royaltyEntries.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={7} className="text-center text-sm text-muted-foreground py-8">
+                                <TableCell colSpan={7} className="text-center text-base text-muted-foreground py-10">
                                     No royalty entries found. Add royalty number when recording inward entries.
                                 </TableCell>
                             </TableRow>

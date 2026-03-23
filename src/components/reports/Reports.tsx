@@ -226,12 +226,12 @@ export function Reports() {
 
 function ReportTable({ headers, rows, totals }: { headers: string[]; rows: string[][]; totals?: string[] }) {
     return (
-        <div className="border rounded-md overflow-hidden">
+        <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
             <Table>
                 <TableHeader>
-                    <TableRow className="bg-gray-900 hover:bg-gray-900">
+                    <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
                         {headers.map((h) => (
-                            <TableHead key={h} className="text-white text-xs font-mono uppercase">{h}</TableHead>
+                            <TableHead key={h} className="text-gray-600 text-sm font-semibold uppercase tracking-wider">{h}</TableHead>
                         ))}
                     </TableRow>
                 </TableHeader>

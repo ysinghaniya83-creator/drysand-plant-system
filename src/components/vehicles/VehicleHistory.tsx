@@ -75,9 +75,9 @@ export function VehicleHistory() {
                             <div className="border rounded-md overflow-hidden mt-2">
                                 <Table>
                                     <TableHeader>
-                                        <TableRow className="bg-gray-900 hover:bg-gray-900">
+                                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
                                             {["Date", "Party", "Material", "Gross (T)", "Tare (T)", "Net (T)", "Royalty (T)"].map((h) => (
-                                                <TableHead key={h} className="text-white text-xs font-mono uppercase">{h}</TableHead>
+                                                <TableHead key={h} className="text-gray-600 text-sm font-semibold uppercase tracking-wider">{h}</TableHead>
                                             ))}
                                         </TableRow>
                                     </TableHeader>
@@ -104,9 +104,9 @@ export function VehicleHistory() {
                             <div className="border rounded-md overflow-hidden mt-2">
                                 <Table>
                                     <TableHeader>
-                                        <TableRow className="bg-gray-900 hover:bg-gray-900">
+                                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
                                             {["Date", "Party", "Item", "Type", "Gross (T)", "Tare (T)", "Net (T)"].map((h) => (
-                                                <TableHead key={h} className="text-white text-xs font-mono uppercase">{h}</TableHead>
+                                                <TableHead key={h} className="text-gray-600 text-sm font-semibold uppercase tracking-wider">{h}</TableHead>
                                             ))}
                                         </TableRow>
                                     </TableHeader>

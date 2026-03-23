@@ -5,7 +5,7 @@ import { AttendanceSheet } from "@/components/employees/Attendance";
 export default function EmployeesPage() {
     return (
         <div className="max-w-6xl mx-auto p-4 space-y-4">
-            <h1 className="text-xl font-bold">Employees</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Employees</h1>
             <Tabs defaultValue="master">
                 <TabsList>
                     <TabsTrigger value="master">Employee List</TabsTrigger>

@@ -83,20 +83,20 @@ export function BagSizeMaster() {
                 <Button size="sm" onClick={openAdd}>+ Add Bag Size</Button>
             </div>
 
-            <div className="border rounded-md overflow-hidden">
+            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-gray-900 hover:bg-gray-900">
-                            <TableHead className="text-white text-xs font-mono uppercase">Label</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase text-right">Weight (kg)</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase text-right">Weight (ton)</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase"></TableHead>
+                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Label</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Weight (kg)</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Weight (ton)</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {bags.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={4} className="text-center text-sm text-muted-foreground py-8">
+                                <TableCell colSpan={4} className="text-center text-base text-muted-foreground py-10">
                                     No bag sizes. Add 25 kg, 50 kg, etc.
                                 </TableCell>
                             </TableRow>

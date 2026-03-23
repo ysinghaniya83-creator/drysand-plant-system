@@ -83,19 +83,19 @@ export function ExpenseHeadMaster() {
                 <Button size="sm" onClick={openAdd}>+ Add Head</Button>
             </div>
 
-            <div className="border rounded-md overflow-hidden">
+            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-gray-900 hover:bg-gray-900">
-                            <TableHead className="text-white text-xs font-mono uppercase">Expense Head</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">Included in Profit</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase"></TableHead>
+                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Expense Head</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Included in Profit</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {heads.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={3} className="text-center text-sm text-muted-foreground py-8">
+                                <TableCell colSpan={3} className="text-center text-base text-muted-foreground py-10">
                                     No expense heads. Add diesel, labour, maintenance, etc.
                                 </TableCell>
                             </TableRow>

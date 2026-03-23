@@ -123,22 +123,22 @@ export function PartyMaster() {
                 <Button size="sm" onClick={openAdd}>+ Add Party</Button>
             </div>
 
-            <div className="border rounded-md overflow-hidden">
+            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-gray-900 hover:bg-gray-900">
-                            <TableHead className="text-white text-xs font-mono uppercase">Name</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">Type</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">Phone</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">GST</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase text-right">Opening Bal.</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase"></TableHead>
+                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Name</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Type</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Phone</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">GST</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Opening Bal.</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {filtered.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={6} className="text-center text-sm text-muted-foreground py-8">
+                                <TableCell colSpan={6} className="text-center text-base text-muted-foreground py-10">
                                     No parties found. Add one to get started.
                                 </TableCell>
                             </TableRow>

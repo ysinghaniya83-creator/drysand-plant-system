@@ -119,22 +119,22 @@ export function ItemMaster() {
                 <Button size="sm" onClick={openAdd}>+ Add Item</Button>
             </div>
 
-            <div className="border rounded-md overflow-hidden">
+            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-gray-900 hover:bg-gray-900">
-                            <TableHead className="text-white text-xs font-mono uppercase">Name</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">Type</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">Grade</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">Unit</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase text-right">Current Stock</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase"></TableHead>
+                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Name</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Type</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Grade</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Unit</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Current Stock</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {items.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={6} className="text-center text-sm text-muted-foreground py-8">
+                                <TableCell colSpan={6} className="text-center text-base text-muted-foreground py-10">
                                     No items found. Add raw materials and sand grades to get started.
                                 </TableCell>
                             </TableRow>

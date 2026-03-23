@@ -207,26 +207,26 @@ export function PurchaseBills() {
                 <Button size="sm" onClick={openAdd}>+ Add Bill</Button>
             </div>
 
-            <div className="border rounded-md overflow-hidden">
+            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-gray-900 hover:bg-gray-900">
-                            <TableHead className="text-white text-xs font-mono uppercase">Date</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">Bill #</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">Party</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">Vehicle</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase text-right">Bill Wt (T)</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase text-right">Rate</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase text-right">Bill Amt</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase">Status</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase text-right">Wt Diff</TableHead>
-                            <TableHead className="text-white text-xs font-mono uppercase"></TableHead>
+                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Date</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Bill #</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Party</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Vehicle</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Bill Wt (T)</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Rate</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Bill Amt</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Status</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Wt Diff</TableHead>
+                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {bills.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={10} className="text-center text-sm text-muted-foreground py-8">
+                                <TableCell colSpan={10} className="text-center text-base text-muted-foreground py-10">
                                     No purchase bills yet.
                                 </TableCell>
                             </TableRow>

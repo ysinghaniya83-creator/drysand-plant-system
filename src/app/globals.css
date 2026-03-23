@@ -96,7 +96,7 @@
 
   html {
     @apply font-sans;
-    font-size: 16px;
+    font-size: 18px;
   }
 
   /* Smooth scrollbar */
@@ -129,4 +129,14 @@
 /* Table td cells default to mono for numbers */
 table td {
   font-variant-numeric: tabular-nums;
+}
+
+/* Alternating table rows for readability */
+table tbody tr:nth-child(even) {
+  background-color: rgb(249 250 251);
+}
+
+/* Empty-state cells span full width */
+table tbody tr:only-child td {
+  background-color: transparent;
 }
