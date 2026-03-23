@@ -81,7 +81,8 @@ const EMPTY_FORM: InwardForm = {
 };
 
 export function InwardEntryList() {
-    const { user } = useAuth();
+    const { user, appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [entries, setEntries] = useState<InwardEntryType[]>([]);
     const [parties, setParties] = useState<Party[]>([]);
     const [open, setOpen] = useState(false);
@@ -255,8 +256,8 @@ export function InwardEntryList() {
                                 <TableCell className="text-right font-mono text-sm">₹{entry.ratePerTon.toLocaleString("en-IN")}</TableCell>
                                 <TableCell className="text-right font-mono text-sm font-semibold">₹{entry.amount.toLocaleString("en-IN")}</TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(entry)}>Edit</Button>
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(entry)}>Delete</Button>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(entry)}>Edit</Button>}
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(entry)}>Delete</Button>}
                                 </TableCell>
                             </TableRow>
                         ))}

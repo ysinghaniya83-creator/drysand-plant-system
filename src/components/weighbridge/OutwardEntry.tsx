@@ -80,7 +80,8 @@ const EMPTY_FORM: OutwardForm = {
 };
 
 export function OutwardEntryList() {
-    const { user } = useAuth();
+    const { user, appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [entries, setEntries] = useState<OutwardEntryType[]>([]);
     const [parties, setParties] = useState<Party[]>([]);
     const [items, setItems] = useState<Item[]>([]);
@@ -218,8 +219,8 @@ export function OutwardEntryList() {
                                 <TableCell className="text-sm">{entry.itemName}</TableCell>
                                 <TableCell className="text-right font-mono text-sm font-semibold">{entry.netWeight.toFixed(3)}</TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(entry)}>Edit</Button>
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(entry)}>Delete</Button>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(entry)}>Edit</Button>}
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(entry)}>Delete</Button>}
                                 </TableCell>
                             </TableRow>
                         ))}

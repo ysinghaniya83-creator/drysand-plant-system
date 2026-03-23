@@ -68,7 +68,8 @@ const EMPTY_FORM: PaymentForm = {
 };
 
 export function PaymentList() {
-    const { user } = useAuth();
+    const { user, appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [payments, setPayments] = useState<Payment[]>([]);
     const [parties, setParties] = useState<Party[]>([]);
     const [open, setOpen] = useState(false);
@@ -187,8 +188,8 @@ export function PaymentList() {
                                 <TableCell className="text-sm font-mono text-muted-foreground">{payment.reference || "—"}</TableCell>
                                 <TableCell className="text-right font-mono text-sm font-semibold">₹{payment.amount.toLocaleString("en-IN")}</TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(payment)}>Edit</Button>
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(payment)}>Delete</Button>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(payment)}>Edit</Button>}
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(payment)}>Delete</Button>}
                                 </TableCell>
                             </TableRow>
                         ))}

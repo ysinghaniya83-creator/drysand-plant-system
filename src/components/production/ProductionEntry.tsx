@@ -63,7 +63,8 @@ function emptyForm(): ProductionForm {
 }
 
 export function ProductionEntryList() {
-    const { user } = useAuth();
+    const { user, appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [entries, setEntries] = useState<ProductionEntry[]>([]);
     const [finishedItems, setFinishedItems] = useState<Item[]>([]);
     const [open, setOpen] = useState(false);
@@ -212,8 +213,8 @@ export function ProductionEntryList() {
                                     <TableCell className="text-right font-mono text-sm font-semibold">{totalOut.toFixed(3)}</TableCell>
                                     <TableCell className="text-right font-mono text-sm text-orange-600">{entry.wastage.toFixed(3)}</TableCell>
                                     <TableCell className="text-right">
-                                        <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(entry)}>Edit</Button>
-                                        <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(entry)}>Delete</Button>
+                                        {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(entry)}>Edit</Button>}
+                                        {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(entry)}>Delete</Button>}
                                     </TableCell>
                                 </TableRow>
                             );

@@ -59,7 +59,8 @@ const EMPTY_FORM: BaggingForm = {
 };
 
 export function BaggingEntryList() {
-    const { user } = useAuth();
+    const { user, appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [entries, setEntries] = useState<BaggingEntry[]>([]);
     const [finishedItems, setFinishedItems] = useState<Item[]>([]);
     const [bagSizes, setBagSizes] = useState<BagSize[]>([]);
@@ -181,8 +182,8 @@ export function BaggingEntryList() {
                                 <TableCell className="text-right font-mono text-sm">{entry.numberOfBags.toLocaleString("en-IN")}</TableCell>
                                 <TableCell className="text-right font-mono text-sm font-semibold">{entry.totalWeightTons.toFixed(3)}</TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(entry)}>Edit</Button>
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(entry)}>Delete</Button>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(entry)}>Edit</Button>}
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(entry)}>Delete</Button>}
                                 </TableCell>
                             </TableRow>
                         ))}

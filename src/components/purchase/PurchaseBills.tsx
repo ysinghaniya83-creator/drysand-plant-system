@@ -11,6 +11,7 @@ import {
     deleteDocument,
     queryDocuments,
 } from "@/lib/firestore";
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -71,6 +72,8 @@ const EMPTY_FORM: BillForm = {
 };
 
 export function PurchaseBills() {
+    const { appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [bills, setBills] = useState<PurchaseBill[]>([]);
     const [parties, setParties] = useState<Party[]>([]);
     const [open, setOpen] = useState(false);
@@ -253,8 +256,8 @@ export function PurchaseBills() {
                                     ) : "—"}
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(bill)}>Edit</Button>
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(bill)}>Delete</Button>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(bill)}>Edit</Button>}
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(bill)}>Delete</Button>}
                                 </TableCell>
                             </TableRow>
                         ))}

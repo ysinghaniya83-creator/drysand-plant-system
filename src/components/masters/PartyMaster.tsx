@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { Party, PartyType } from "@/types";
 import { collectionListener, addDocument, updateDocument, deleteDocument } from "@/lib/firestore";
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,6 +42,8 @@ const EMPTY: Omit<Party, "id" | "createdAt"> = {
 };
 
 export function PartyMaster() {
+    const { appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [parties, setParties] = useState<Party[]>([]);
     const [open, setOpen] = useState(false);
     const [editing, setEditing] = useState<Party | null>(null);
@@ -157,8 +160,8 @@ export function PartyMaster() {
                                     ) : "—"}
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(p)}>Edit</Button>
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(p)}>Delete</Button>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(p)}>Edit</Button>}
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(p)}>Delete</Button>}
                                 </TableCell>
                             </TableRow>
                         ))}

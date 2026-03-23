@@ -53,7 +53,8 @@ const EMPTY_FORM: ExpenseForm = {
 };
 
 export function ExpenseEntryList() {
-    const { user } = useAuth();
+    const { user, appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [entries, setEntries] = useState<ExpenseEntry[]>([]);
     const [heads, setHeads] = useState<ExpenseHead[]>([]);
     const [open, setOpen] = useState(false);
@@ -159,8 +160,8 @@ export function ExpenseEntryList() {
                                 <TableCell className="text-sm text-muted-foreground">{entry.description || "—"}</TableCell>
                                 <TableCell className="text-right font-mono text-sm font-semibold">₹{entry.amount.toLocaleString("en-IN")}</TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(entry)}>Edit</Button>
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(entry)}>Delete</Button>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(entry)}>Edit</Button>}
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(entry)}>Delete</Button>}
                                 </TableCell>
                             </TableRow>
                         ))}

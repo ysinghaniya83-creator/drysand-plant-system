@@ -7,6 +7,7 @@ import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
+import { HIDDEN_NAV_FOR_ROLE } from "@/lib/permissions";
 import {
     LayoutDashboard,
     Scale,
@@ -117,13 +118,17 @@ export function AppSidebar() {
 
             {/* Nav */}
             <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-5">
-                {navSections.map((section) => (
+                {navSections.map((section) => {
+                    const hidden = HIDDEN_NAV_FOR_ROLE[appUser?.role ?? "viewer"] ?? [];
+                    const visibleItems = section.items.filter((item) => !hidden.includes(item.href));
+                    if (visibleItems.length === 0) return null;
+                    return (
                     <div key={section.label}>
                         <p className="text-[10.5px] font-bold text-gray-400 uppercase tracking-[0.1em] px-3 mb-1">
                             {section.label}
                         </p>
                         <div className="space-y-0.5">
-                            {section.items.map((item) => {
+                            {visibleItems.map((item) => {
                                 const active = pathname === item.href || pathname.startsWith(item.href + "/");
                                 const Icon = item.icon;
                                 return (
@@ -155,7 +160,8 @@ export function AppSidebar() {
                             })}
                         </div>
                     </div>
-                ))}
+                    );
+                })}
             </nav>
 
             {/* User footer */}

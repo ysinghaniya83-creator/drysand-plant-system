@@ -67,7 +67,8 @@ const EMPTY_FORM: BagSaleForm = {
 };
 
 export function BagSaleList() {
-    const { user } = useAuth();
+    const { user, appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [sales, setSales] = useState<BagSale[]>([]);
     const [parties, setParties] = useState<Party[]>([]);
     const [finishedItems, setFinishedItems] = useState<Item[]>([]);
@@ -217,8 +218,8 @@ export function BagSaleList() {
                                 <TableCell className="text-right font-mono text-sm">₹{sale.ratePerTon.toLocaleString("en-IN")}</TableCell>
                                 <TableCell className="text-right font-mono text-sm font-semibold">₹{sale.totalAmount.toLocaleString("en-IN")}</TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(sale)}>Edit</Button>
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(sale)}>Delete</Button>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(sale)}>Edit</Button>}
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(sale)}>Delete</Button>}
                                 </TableCell>
                             </TableRow>
                         ))}

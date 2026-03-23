@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
 import { Factory } from "lucide-react";
+import { canAccessRoute } from "@/lib/permissions";
 
 // Map routes to readable page titles
 const PAGE_TITLES: Record<string, string> = {
@@ -64,6 +65,7 @@ function UserAvatar({ name, email }: { name?: string | null; email?: string | nu
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     const { user, appUser, loading, signOut } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
 
     useEffect(() => {
         if (!loading && !user) router.push("/login");
@@ -94,6 +96,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
     if (appUser.status === "disabled") {
         return <StatusScreen emoji="🚫" title="Account Disabled" body="Your account has been disabled. Please contact the administrator." onSignOut={handleSignOut} />;
+    }
+
+    // Route-level access control — redirect to dashboard if role cannot access this page
+    if (!canAccessRoute(appUser.role, pathname)) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-background">
+                <div className="text-center max-w-sm space-y-4 p-10 bg-card rounded-2xl shadow-sm border">
+                    <div className="text-4xl">🔒</div>
+                    <h1 className="text-lg font-semibold">Access Restricted</h1>
+                    <p className="text-sm text-muted-foreground">
+                        Your role <span className="font-semibold capitalize">({appUser.role})</span> does not have permission to view this page.
+                    </p>
+                    <Button variant="outline" size="sm" onClick={() => router.push("/dashboard")}>Go to Dashboard</Button>
+                </div>
+            </div>
+        );
     }
 
     const dateStr = new Date().toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" });

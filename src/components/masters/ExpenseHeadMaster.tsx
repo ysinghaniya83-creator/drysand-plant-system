@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { ExpenseHead } from "@/types";
 import { collectionListener, addDocument, updateDocument, deleteDocument } from "@/lib/firestore";
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +26,8 @@ import {
 } from "@/components/ui/table";
 
 export function ExpenseHeadMaster() {
+    const { appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [heads, setHeads] = useState<ExpenseHead[]>([]);
     const [open, setOpen] = useState(false);
     const [editing, setEditing] = useState<ExpenseHead | null>(null);
@@ -109,8 +112,8 @@ export function ExpenseHeadMaster() {
                                         : <Badge className="bg-gray-100 text-gray-500 hover:bg-gray-100 text-xs">No</Badge>}
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(h)}>Edit</Button>
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(h)}>Delete</Button>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(h)}>Edit</Button>}
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(h)}>Delete</Button>}
                                 </TableCell>
                             </TableRow>
                         ))}

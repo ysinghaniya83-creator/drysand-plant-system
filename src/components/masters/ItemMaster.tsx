@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { Item, ItemType } from "@/types";
 import { collectionListener, addDocument, updateDocument, deleteDocument } from "@/lib/firestore";
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,6 +56,8 @@ const EMPTY = {
 };
 
 export function ItemMaster() {
+    const { appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [items, setItems] = useState<Item[]>([]);
     const [open, setOpen] = useState(false);
     const [editing, setEditing] = useState<Item | null>(null);
@@ -153,8 +156,8 @@ export function ItemMaster() {
                                     {item.currentStock?.toLocaleString() ?? 0} {item.unit}
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(item)}>Edit</Button>
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(item)}>Delete</Button>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(item)}>Edit</Button>}
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(item)}>Delete</Button>}
                                 </TableCell>
                             </TableRow>
                         ))}

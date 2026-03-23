@@ -62,7 +62,8 @@ function computeSystemStock(
 }
 
 export function ClosingStockEntry() {
-    const { user } = useAuth();
+    const { user, appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [records, setRecords] = useState<DailyClosingStock[]>([]);
     const [items, setItems] = useState<Item[]>([]);
     const [productions, setProductions] = useState<ProductionEntry[]>([]);
@@ -183,7 +184,7 @@ export function ClosingStockEntry() {
                                 </TableCell>
                                 <TableCell className="text-sm text-muted-foreground">{r.remarks || "—"}</TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(r)}>Edit</Button>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(r)}>Edit</Button>}
                                 </TableCell>
                             </TableRow>
                         ))}

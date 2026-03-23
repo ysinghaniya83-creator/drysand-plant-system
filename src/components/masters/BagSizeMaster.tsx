@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { BagSize } from "@/types";
 import { collectionListener, addDocument, updateDocument, deleteDocument } from "@/lib/firestore";
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +25,8 @@ import {
 } from "@/components/ui/table";
 
 export function BagSizeMaster() {
+    const { appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [bags, setBags] = useState<BagSize[]>([]);
     const [open, setOpen] = useState(false);
     const [editing, setEditing] = useState<BagSize | null>(null);
@@ -109,8 +112,8 @@ export function BagSizeMaster() {
                                     {(b.weightKg / 1000).toFixed(3)} ton
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(b)}>Edit</Button>
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(b)}>Delete</Button>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(b)}>Edit</Button>}
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(b)}>Delete</Button>}
                                 </TableCell>
                             </TableRow>
                         ))}

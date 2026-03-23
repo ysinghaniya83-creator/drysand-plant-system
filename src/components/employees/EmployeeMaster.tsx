@@ -71,7 +71,8 @@ const EMPTY_FORM: EmployeeForm = {
 };
 
 export function EmployeeMaster() {
-    const { user } = useAuth();
+    const { user, appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [open, setOpen] = useState(false);
     const [editing, setEditing] = useState<Employee | null>(null);
@@ -192,8 +193,8 @@ export function EmployeeMaster() {
                                     </Badge>
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(emp)}>Edit</Button>
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(emp)}>Delete</Button>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(emp)}>Edit</Button>}
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive" onClick={() => handleDelete(emp)}>Delete</Button>}
                                 </TableCell>
                             </TableRow>
                         ))}

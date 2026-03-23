@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Timestamp } from "firebase/firestore";
 import type { PurchaseRegisterEntry, InwardMaterialType } from "@/types";
 import { collectionListener, updateDocument } from "@/lib/firestore";
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,6 +36,8 @@ const MAT_COLORS: Record<InwardMaterialType, string> = {
 };
 
 export function PurchaseRegister() {
+    const { appUser } = useAuth();
+    const isAdmin = appUser?.role === "admin";
     const [entries, setEntries] = useState<PurchaseRegisterEntry[]>([]);
     const [editing, setEditing] = useState<PurchaseRegisterEntry | null>(null);
     const [rate, setRate] = useState("");
@@ -125,9 +128,9 @@ export function PurchaseRegister() {
                                     )}
                                 </TableCell>
                                 <TableCell>
-                                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(entry)}>
+                                    {isAdmin && <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => openEdit(entry)}>
                                         Edit Rate
-                                    </Button>
+                                    </Button>}
                                 </TableCell>
                             </TableRow>
                         ))}
