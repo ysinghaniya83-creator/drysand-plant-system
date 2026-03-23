@@ -88,20 +88,20 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             {/* Main content area */}
             <div className="flex-1 flex flex-col ml-60 min-h-screen">
                 {/* Top header */}
-                <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b bg-card px-6 shrink-0 shadow-sm">
-                    <h2 className="text-[15px] font-semibold text-foreground">
+                <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b bg-card px-6 shrink-0 shadow-sm">
+                    <h2 className="text-[17px] font-bold text-foreground tracking-tight">
                         <PageTitle />
                     </h2>
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <span className="hidden sm:block">
+                    <div className="flex items-center gap-3 text-[14px] text-muted-foreground">
+                        <span className="hidden sm:block font-medium">
                             {new Date().toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
                         </span>
                         <div className="h-4 w-px bg-border" />
-                        <span className="font-medium text-foreground">{appUser.name ?? appUser.email}</span>
+                        <span className="font-semibold text-foreground">{appUser.name ?? appUser.email}</span>
                     </div>
                 </header>
                 {/* Page content */}
-                <main className="flex-1 overflow-auto p-6">
+                <main className="flex-1 overflow-auto p-7">
                     {children}
                 </main>
             </div>
