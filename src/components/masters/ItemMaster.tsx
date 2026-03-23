@@ -119,16 +119,16 @@ export function ItemMaster() {
                 <Button size="sm" onClick={openAdd}>+ Add Item</Button>
             </div>
 
-            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+            <div className="overflow-x-auto rounded-2xl border border-sand-100">
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Name</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Type</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Grade</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Unit</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Current Stock</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider"></TableHead>
+                        <TableRow className="bg-sand-50 border-b border-sand-100">
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Name</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Type</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Grade</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Unit</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Current Stock</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

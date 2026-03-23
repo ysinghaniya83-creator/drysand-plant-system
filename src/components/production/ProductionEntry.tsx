@@ -178,17 +178,17 @@ export function ProductionEntryList() {
                 <Button size="sm" onClick={openAdd}>+ New Production Entry</Button>
             </div>
 
-            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+            <div className="overflow-x-auto rounded-2xl border border-sand-100">
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Date</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Sand (T)</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Coal (T)</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Outputs</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Total Out (T)</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Wastage (T)</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider"></TableHead>
+                        <TableRow className="bg-sand-50 border-b border-sand-100">
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Sand (T)</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Coal (T)</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Outputs</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Total Out (T)</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Wastage (T)</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

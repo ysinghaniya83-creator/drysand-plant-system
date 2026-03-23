@@ -107,12 +107,12 @@ export function AttendanceSheet() {
                 <p className="text-sm text-muted-foreground">Loading…</p>
             ) : (
                 <>
-                    <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                    <div className="overflow-x-auto rounded-2xl border border-sand-100">
                         <Table>
                             <TableHeader>
-                                <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
+                                <TableRow className="bg-sand-50 border-b border-sand-100">
                                     {["Employee", "Type", "Present", "OT Hours", "Remarks"].map((h) => (
-                                        <TableHead key={h} className="text-gray-600 text-sm font-semibold uppercase tracking-wider">{h}</TableHead>
+                                        <TableHead key={h} className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</TableHead>
                                     ))}
                                 </TableRow>
                             </TableHeader>

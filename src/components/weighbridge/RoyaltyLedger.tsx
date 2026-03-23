@@ -45,17 +45,17 @@ export function RoyaltyLedger() {
                 )}
             </div>
 
-            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+            <div className="overflow-x-auto rounded-2xl border border-sand-100">
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Date</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Vehicle</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Material</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Royalty #</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Royalty Wt (T)</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Bridge Wt (T)</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Difference (T)</TableHead>
+                        <TableRow className="bg-sand-50 border-b border-sand-100">
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Vehicle</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Material</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Royalty #</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Royalty Wt (T)</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Bridge Wt (T)</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Difference (T)</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

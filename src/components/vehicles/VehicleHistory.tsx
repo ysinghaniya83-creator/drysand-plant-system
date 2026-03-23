@@ -75,9 +75,9 @@ export function VehicleHistory() {
                             <div className="border rounded-md overflow-hidden mt-2">
                                 <Table>
                                     <TableHeader>
-                                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
+                                        <TableRow className="bg-sand-50 border-b border-sand-100">
                                             {["Date", "Party", "Material", "Gross (T)", "Tare (T)", "Net (T)", "Royalty (T)"].map((h) => (
-                                                <TableHead key={h} className="text-gray-600 text-sm font-semibold uppercase tracking-wider">{h}</TableHead>
+                                                <TableHead key={h} className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</TableHead>
                                             ))}
                                         </TableRow>
                                     </TableHeader>
@@ -104,9 +104,9 @@ export function VehicleHistory() {
                             <div className="border rounded-md overflow-hidden mt-2">
                                 <Table>
                                     <TableHeader>
-                                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
+                                        <TableRow className="bg-sand-50 border-b border-sand-100">
                                             {["Date", "Party", "Item", "Type", "Gross (T)", "Tare (T)", "Net (T)"].map((h) => (
-                                                <TableHead key={h} className="text-gray-600 text-sm font-semibold uppercase tracking-wider">{h}</TableHead>
+                                                <TableHead key={h} className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{h}</TableHead>
                                             ))}
                                         </TableRow>
                                     </TableHeader>

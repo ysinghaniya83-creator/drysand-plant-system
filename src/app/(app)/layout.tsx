@@ -61,7 +61,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-background">
                 <div className="flex flex-col items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600">
                         <Factory size={20} className="text-white" />
                     </div>
                     <p className="text-sm text-muted-foreground animate-pulse">Loading…</p>
@@ -88,7 +88,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             {/* Main content area */}
             <div className="flex-1 flex flex-col ml-60 min-h-screen">
                 {/* Top header */}
-                <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b bg-card px-6 shrink-0 shadow-sm">
+                <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-sand-100 bg-white px-6 shrink-0">
                     <h2 className="text-[17px] font-bold text-foreground tracking-tight">
                         <PageTitle />
                     </h2>
@@ -101,7 +101,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     </div>
                 </header>
                 {/* Page content */}
-                <main className="flex-1 overflow-auto p-7">
+                <main className="flex-1 overflow-auto p-6 md:p-8">
                     {children}
                 </main>
             </div>

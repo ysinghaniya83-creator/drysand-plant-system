@@ -83,14 +83,14 @@ export function BagSizeMaster() {
                 <Button size="sm" onClick={openAdd}>+ Add Bag Size</Button>
             </div>
 
-            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+            <div className="overflow-x-auto rounded-2xl border border-sand-100">
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Label</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Weight (kg)</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Weight (ton)</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider"></TableHead>
+                        <TableRow className="bg-sand-50 border-b border-sand-100">
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Label</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Weight (kg)</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Weight (ton)</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

@@ -153,17 +153,17 @@ export function PaymentList() {
                 <Button size="sm" onClick={openAdd}>+ Record Payment</Button>
             </div>
 
-            <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+            <div className="overflow-x-auto rounded-2xl border border-sand-100">
                 <Table>
                     <TableHeader>
-                        <TableRow className="bg-gray-50 hover:bg-gray-100 border-b-2 border-gray-200">
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Date</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Party</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Type</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Mode</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider">Reference</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider text-right">Amount</TableHead>
-                            <TableHead className="text-gray-600 text-sm font-semibold uppercase tracking-wider"></TableHead>
+                        <TableRow className="bg-sand-50 border-b border-sand-100">
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Party</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Type</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Mode</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Reference</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Amount</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide"></TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
