@@ -119,7 +119,14 @@
   }
 }
 
-/* Utility: number cells always tabular */
+/* Utility: number cells → IBM Plex Mono, tabular figures */
 .tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-geist-mono), monospace;
+  letter-spacing: -0.01em;
+}
+
+/* Table td cells default to mono for numbers */
+table td {
   font-variant-numeric: tabular-nums;
 }
