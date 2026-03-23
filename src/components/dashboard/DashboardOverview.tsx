@@ -97,10 +97,13 @@ export function DashboardOverview() {
     const todayBags = todayBagging.reduce((s, r) => s + r.numberOfBags, 0);
 
     const monthPurchase = purchases.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + r.amount, 0);
-    const monthRevenue = looseSales.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + r.totalAmount, 0)
-        + bagSales.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + r.totalAmount, 0);
+    // Revenue = sale amount only (excl. transport — transport is a pass-through cost)
+    const monthRevenue = looseSales.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + r.amount, 0)
+        + bagSales.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + r.amount, 0);
+    const monthTransport = looseSales.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + (r.transportCost ?? 0), 0)
+        + bagSales.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + (r.transportCost ?? 0), 0);
     const monthExpenses = expenses.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + r.amount, 0);
-    const monthProfit = monthRevenue - monthPurchase - monthExpenses;
+    const monthProfit = monthRevenue - monthTransport - monthPurchase - monthExpenses;
 
     const totalSandIn = inwards.filter((e) => e.materialType === "sand").reduce((s, e) => s + e.netWeight, 0);
     const totalCoalIn = inwards.filter((e) => e.materialType === "coal").reduce((s, e) => s + e.netWeight, 0);
