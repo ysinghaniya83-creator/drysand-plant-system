@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 import type { InwardEntry, LooseSale, BagSale, ProductionEntry, PurchaseRegisterEntry, ExpenseEntry, BaggingEntry } from "@/types";
 import { collectionListener } from "@/lib/firestore";
-import { ArrowDownToLine, TrendingUp, Factory, Package, Banknote, ShoppingCart, Receipt, BarChart2 } from "lucide-react";
+import { ArrowDownToLine, TrendingUp, Factory, Package, Banknote, ShoppingCart, Receipt, BarChart2, TrendingDown } from "lucide-react";
 
 function isToday(ts: Timestamp) {
     const d = ts.toDate();
@@ -18,17 +18,46 @@ function isThisMonth(ts: Timestamp) {
     return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
 }
 
-function StatCard({ label, value, sub, icon: Icon, accent }: { label: string; value: string; sub?: string; icon: React.ElementType; accent: string }) {
+function StatCard({
+    label,
+    value,
+    sub,
+    icon: Icon,
+    accentClass,
+    negative,
+}: {
+    label: string;
+    value: string;
+    sub?: string;
+    icon: React.ElementType;
+    accentClass: string;
+    negative?: boolean;
+}) {
     return (
-        <div className="card p-4 flex items-start gap-3">
-            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${accent}`}>
-                <Icon size={20} className="text-white" />
+        <div className="card p-5 flex flex-col gap-4 hover:shadow-md transition-shadow duration-200">
+            <div className="flex items-center justify-between">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400">{label}</p>
+                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${accentClass}`}>
+                    <Icon size={17} className="text-white" />
+                </div>
             </div>
-            <div className="min-w-0">
-                <p className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-0.5">{label}</p>
-                <p className="text-xl font-semibold font-mono text-gray-900 leading-tight tabular-nums">{value}</p>
-                {sub && <p className="text-xs text-gray-500 mt-0.5">{sub}</p>}
+            <div>
+                <p className={`text-[1.45rem] font-bold tabular-nums leading-tight font-mono tracking-tight ${negative ? "text-red-600" : "text-gray-900"}`}>
+                    {value}
+                </p>
+                {sub && (
+                    <p className="text-[12px] text-gray-400 font-medium mt-1">{sub}</p>
+                )}
             </div>
+        </div>
+    );
+}
+
+function SectionHeader({ label }: { label: string }) {
+    return (
+        <div className="flex items-center gap-3 mb-3">
+            <span className="text-[11px] font-bold uppercase tracking-[0.1em] text-gray-400">{label}</span>
+            <div className="flex-1 h-px bg-sand-200" />
         </div>
     );
 }
@@ -69,69 +98,136 @@ export function DashboardOverview() {
     const monthExpenses = expenses.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + r.amount, 0);
     const monthProfit = monthRevenue - monthPurchase - monthExpenses;
 
-    const recentInward = [...inwards].sort((a, b) => b.date.seconds - a.date.seconds).slice(0, 6);
+    const recentInward = [...inwards].sort((a, b) => b.date.seconds - a.date.seconds).slice(0, 8);
 
     const today = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
     return (
-        <div className="space-y-6 max-w-6xl">
-            <div>
-                <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-                <p className="text-sm text-gray-500 mt-0.5">{today}</p>
-            </div>
-
-            {/* Today */}
-            <div>
-                <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Today</h2>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                    <StatCard label="Inward" value={`${todayInwardTons.toFixed(2)} T`} sub={`${todayInward.length} vehicles`} icon={ArrowDownToLine} accent="bg-green-600" />
-                    <StatCard label="Production" value={`${todayProdTons.toFixed(2)} T`} sub={`${todayProduction.length} batches`} icon={Factory} accent="bg-blue-600" />
-                    <StatCard label="Sales" value={`₹${todaySaleAmount.toLocaleString("en-IN")}`} sub={`${todayLooseSales.length + todayBagSales.length} invoices`} icon={TrendingUp} accent="bg-brand-600" />
-                    <StatCard label="Bagging" value={`${todayBags.toLocaleString("en-IN")} bags`} sub={`${todayBagging.length} batches`} icon={Package} accent="bg-amber-500" />
+        <div className="space-y-7 max-w-6xl">
+            {/* Page header */}
+            <div className="flex items-end justify-between">
+                <div>
+                    <h1 className="text-[1.4rem] font-bold text-gray-900 tracking-tight">Dashboard</h1>
+                    <p className="text-[13px] text-gray-400 font-medium mt-0.5">{today}</p>
                 </div>
             </div>
 
-            {/* This month */}
+            {/* Today's stats */}
             <div>
-                <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">This Month</h2>
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                    <StatCard label="Revenue" value={`₹${monthRevenue.toLocaleString("en-IN")}`} icon={Banknote} accent="bg-green-700" />
-                    <StatCard label="Purchases" value={`₹${monthPurchase.toLocaleString("en-IN")}`} icon={ShoppingCart} accent="bg-orange-500" />
-                    <StatCard label="Expenses" value={`₹${monthExpenses.toLocaleString("en-IN")}`} icon={Receipt} accent="bg-red-500" />
-                    <StatCard label="Net Profit" value={`₹${monthProfit.toLocaleString("en-IN")}`} icon={BarChart2} accent={monthProfit >= 0 ? "bg-brand-600" : "bg-red-600"} />
+                <SectionHeader label="Today" />
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    <StatCard
+                        label="Inward"
+                        value={`${todayInwardTons.toFixed(2)} T`}
+                        sub={`${todayInward.length} vehicle${todayInward.length !== 1 ? "s" : ""}`}
+                        icon={ArrowDownToLine}
+                        accentClass="bg-emerald-500"
+                    />
+                    <StatCard
+                        label="Production"
+                        value={`${todayProdTons.toFixed(2)} T`}
+                        sub={`${todayProduction.length} batch${todayProduction.length !== 1 ? "es" : ""}`}
+                        icon={Factory}
+                        accentClass="bg-blue-500"
+                    />
+                    <StatCard
+                        label="Sales"
+                        value={`₹${todaySaleAmount.toLocaleString("en-IN")}`}
+                        sub={`${todayLooseSales.length + todayBagSales.length} invoice${(todayLooseSales.length + todayBagSales.length) !== 1 ? "s" : ""}`}
+                        icon={TrendingUp}
+                        accentClass="bg-brand-600"
+                    />
+                    <StatCard
+                        label="Bagging"
+                        value={`${todayBags.toLocaleString("en-IN")}`}
+                        sub={`bags · ${todayBagging.length} batch${todayBagging.length !== 1 ? "es" : ""}`}
+                        icon={Package}
+                        accentClass="bg-violet-500"
+                    />
                 </div>
             </div>
 
-            {/* Recent inward */}
-            <div className="card overflow-hidden">
-                <div className="px-6 py-4 border-b border-sand-100">
-                    <h2 className="text-sm font-semibold text-gray-700">Recent Inward Entries</h2>
+            {/* Monthly stats */}
+            <div>
+                <SectionHeader label="This Month" />
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    <StatCard
+                        label="Revenue"
+                        value={`₹${monthRevenue.toLocaleString("en-IN")}`}
+                        icon={Banknote}
+                        accentClass="bg-emerald-600"
+                    />
+                    <StatCard
+                        label="Purchases"
+                        value={`₹${monthPurchase.toLocaleString("en-IN")}`}
+                        icon={ShoppingCart}
+                        accentClass="bg-orange-500"
+                    />
+                    <StatCard
+                        label="Expenses"
+                        value={`₹${monthExpenses.toLocaleString("en-IN")}`}
+                        icon={Receipt}
+                        accentClass="bg-red-400"
+                    />
+                    <StatCard
+                        label="Net Profit"
+                        value={`₹${monthProfit.toLocaleString("en-IN")}`}
+                        icon={monthProfit >= 0 ? BarChart2 : TrendingDown}
+                        accentClass={monthProfit >= 0 ? "bg-brand-600" : "bg-red-500"}
+                        negative={monthProfit < 0}
+                    />
                 </div>
-                {recentInward.length === 0 ? (
-                    <div className="text-center py-10 text-sm text-gray-400">No inward entries yet.</div>
-                ) : (
-                    <div className="divide-y">
-                        {recentInward.map((r) => (
-                            <div key={r.id} className="flex items-center gap-4 px-6 py-3.5 hover:bg-muted/30 transition-colors">
-                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-50 shrink-0">
-                                    <ArrowDownToLine size={17} className="text-blue-600" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <span className="text-[15px] font-bold tabular-nums">{r.vehicleNumber}</span>
-                                    <span className="mx-2 text-muted-foreground/40">·</span>
-                                    <span className="text-[14px] text-muted-foreground">{r.partyName}</span>
-                                </div>
-                                <div className="flex items-center gap-3 shrink-0">
-                                    <span className="text-[12px] bg-slate-100 text-slate-600 rounded-full px-2.5 py-0.5 capitalize font-semibold">{r.materialType}</span>
-                                    <span className="text-[15px] font-bold text-blue-600 tabular-nums">{r.netWeight.toFixed(2)} T</span>
-                                    <span className="text-[13px] text-muted-foreground">{r.date.toDate().toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+            </div>
+
+            {/* Recent inward entries */}
+            <div>
+                <SectionHeader label="Recent Inward Entries" />
+                <div className="card overflow-hidden">
+                    {recentInward.length === 0 ? (
+                        <div className="empty-state py-12">
+                            <ArrowDownToLine size={28} className="text-gray-300 mb-3" />
+                            <p className="text-gray-400 text-[13px]">No inward entries yet.</p>
+                        </div>
+                    ) : (
+                        <table className="w-full">
+                            <thead>
+                                <tr>
+                                    <th>Vehicle</th>
+                                    <th>Party</th>
+                                    <th>Material</th>
+                                    <th className="text-right">Net Weight</th>
+                                    <th className="text-right">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {recentInward.map((r) => (
+                                    <tr key={r.id}>
+                                        <td>
+                                            <span className="font-bold text-gray-900 tabular-nums tracking-wide text-[13px]">
+                                                {r.vehicleNumber}
+                                            </span>
+                                        </td>
+                                        <td className="text-gray-600 text-[13px]">{r.partyName}</td>
+                                        <td>
+                                            <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-600 capitalize">
+                                                {r.materialType}
+                                            </span>
+                                        </td>
+                                        <td className="text-right">
+                                            <span className="text-[13px] font-bold text-blue-600 tabular-nums">
+                                                {r.netWeight.toFixed(2)} T
+                                            </span>
+                                        </td>
+                                        <td className="text-right text-[12px] text-gray-400 tabular-nums">
+                                            {r.date.toDate().toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
             </div>
         </div>
     );
 }
-

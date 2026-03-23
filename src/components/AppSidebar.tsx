@@ -105,21 +105,21 @@ export function AppSidebar() {
     return (
         <aside className="fixed inset-y-0 left-0 z-50 flex w-60 flex-col bg-white border-r border-sand-100 select-none">
             {/* Brand */}
-            <div className="flex items-center gap-3 px-5 pt-6 pb-5 border-b border-sand-100">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 shrink-0 shadow-sm">
-                    <Factory size={22} className="text-white" />
+            <div className="flex items-center gap-3 px-5 py-5 border-b border-sand-100">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 shrink-0 shadow-sm shadow-brand-600/30">
+                    <Factory size={18} className="text-white" />
                 </div>
                 <div className="min-w-0">
-                    <p className="text-[15px] font-bold text-gray-900 leading-tight truncate">Dry Sand Plant</p>
-                    <p className="text-[12px] text-gray-400 font-medium tracking-wide">Management System</p>
+                    <p className="text-[14px] font-bold text-gray-900 leading-tight truncate">Dry Sand Plant</p>
+                    <p className="text-[11px] text-gray-400 font-medium">Management System</p>
                 </div>
             </div>
 
             {/* Nav */}
-            <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-4">
+            <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-5">
                 {navSections.map((section) => (
                     <div key={section.label}>
-                        <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest px-2 mb-1.5">
+                        <p className="text-[10.5px] font-bold text-gray-400 uppercase tracking-[0.1em] px-3 mb-1">
                             {section.label}
                         </p>
                         <div className="space-y-0.5">
@@ -131,22 +131,22 @@ export function AppSidebar() {
                                         key={item.href}
                                         href={item.href}
                                         className={cn(
-                                            "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-[14px] font-medium transition-all duration-150",
+                                            "group flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13.5px] font-medium transition-all duration-150",
                                             active
-                                                ? "bg-brand-600 text-white"
-                                                : "text-gray-600 hover:bg-sand-100 hover:text-gray-900"
+                                                ? "bg-brand-600 text-white shadow-sm shadow-brand-600/20"
+                                                : "text-gray-600 hover:bg-sand-50 hover:text-gray-900"
                                         )}
                                     >
                                         <Icon
-                                            size={17}
+                                            size={15}
                                             className={cn(
                                                 "shrink-0 transition-colors",
-                                                active ? "text-white" : "text-gray-400 group-hover:text-gray-700"
+                                                active ? "text-white/90" : "text-gray-400 group-hover:text-gray-600"
                                             )}
                                         />
-                                        <span className="flex-1 leading-none">{item.label}</span>
+                                        <span className="flex-1 leading-none truncate">{item.label}</span>
                                         {item.isUsers && appUser?.role === "admin" && pendingCount > 0 && (
-                                            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-500 px-1 text-[11px] font-bold text-white leading-none">
+                                            <span className="flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-white/25 px-1 text-[10px] font-bold text-white leading-none">
                                                 {pendingCount}
                                             </span>
                                         )}
@@ -159,26 +159,26 @@ export function AppSidebar() {
             </nav>
 
             {/* User footer */}
-            <div className="border-t border-sand-100 px-3 py-3">
-                <div className="flex items-center gap-3 rounded-lg px-2 py-2">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-brand-100 text-brand-800 text-[13px] font-bold">
+            <div className="border-t border-sand-100 p-3">
+                <div className="flex items-center gap-2.5 rounded-xl bg-sand-50 px-3 py-2.5">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white text-[12px] font-bold shadow-sm">
                         {initials}
                     </div>
                     <div className="min-w-0 flex-1">
-                        <p className="text-[14px] font-semibold text-gray-900 truncate leading-tight">
+                        <p className="text-[13px] font-semibold text-gray-900 truncate leading-tight">
                             {appUser?.name ?? appUser?.email ?? "User"}
                         </p>
-                        <p className="text-[12px] text-brand-600 capitalize font-medium">{appUser?.role}</p>
+                        <p className="text-[11px] text-brand-600 capitalize font-medium">{appUser?.role}</p>
                     </div>
                     <button
                         onClick={handleSignOut}
                         title="Sign out"
-                        className="flex h-8 w-8 items-center justify-center rounded-md text-gray-400 hover:bg-sand-100 hover:text-gray-700 transition-colors"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-400 hover:bg-sand-100 hover:text-gray-700 transition-colors"
                     >
-                        <LogOut size={16} />
+                        <LogOut size={14} />
                     </button>
                 </div>
             </div>
-        </aside >
+        </aside>
     );
 }
