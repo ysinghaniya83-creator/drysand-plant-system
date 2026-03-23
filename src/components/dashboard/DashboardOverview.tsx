@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 import type { InwardEntry, LooseSale, BagSale, ProductionEntry, PurchaseRegisterEntry, ExpenseEntry, BaggingEntry } from "@/types";
 import { collectionListener } from "@/lib/firestore";
-import { ArrowDownToLine, TrendingUp, Factory, Package, Banknote, ShoppingCart, Receipt, BarChart2, TrendingDown } from "lucide-react";
+import { ArrowDownToLine, TrendingUp, Factory, Package, Banknote, ShoppingCart, Receipt, BarChart2, TrendingDown, Layers, Flame } from "lucide-react";
 
 function isToday(ts: Timestamp) {
     const d = ts.toDate();
@@ -74,7 +74,7 @@ export function DashboardOverview() {
     useEffect(() => collectionListener<InwardEntry>("inwardEntries", "date", setInwards), []);
     useEffect(() => collectionListener<LooseSale>("looseSales", "date", setLooseSales), []);
     useEffect(() => collectionListener<BagSale>("bagSales", "date", setBagSales), []);
-    useEffect(() => collectionListener<ProductionEntry>("productions", "date", setProductions), []);
+    useEffect(() => collectionListener<ProductionEntry>("productionEntries", "date", setProductions), []);
     useEffect(() => collectionListener<BaggingEntry>("baggings", "date", setBaggings), []);
     useEffect(() => collectionListener<PurchaseRegisterEntry>("purchaseRegister", "date", setPurchases), []);
     useEffect(() => collectionListener<ExpenseEntry>("expenses", "date", setExpenses), []);
@@ -97,6 +97,13 @@ export function DashboardOverview() {
         + bagSales.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + r.totalAmount, 0);
     const monthExpenses = expenses.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + r.amount, 0);
     const monthProfit = monthRevenue - monthPurchase - monthExpenses;
+
+    const totalSandIn = inwards.filter((e) => e.materialType === "sand").reduce((s, e) => s + e.netWeight, 0);
+    const totalCoalIn = inwards.filter((e) => e.materialType === "coal").reduce((s, e) => s + e.netWeight, 0);
+    const totalSandUsed = productions.reduce((s, p) => s + p.sandUsed, 0);
+    const totalCoalUsed = productions.reduce((s, p) => s + p.coalUsed, 0);
+    const rawSandStock = totalSandIn - totalSandUsed;
+    const coalStock = totalCoalIn - totalCoalUsed;
 
     const recentInward = [...inwards].sort((a, b) => b.date.seconds - a.date.seconds).slice(0, 8);
 
@@ -143,6 +150,29 @@ export function DashboardOverview() {
                         sub={`bags · ${todayBagging.length} batch${todayBagging.length !== 1 ? "es" : ""}`}
                         icon={Package}
                         accentClass="bg-violet-500"
+                    />
+                </div>
+            </div>
+
+            {/* Raw material stock */}
+            <div>
+                <SectionHeader label="Raw Material Stock" />
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    <StatCard
+                        label="Raw Sand"
+                        value={`${rawSandStock.toFixed(2)} T`}
+                        sub={`${totalSandIn.toFixed(2)} T in — ${totalSandUsed.toFixed(2)} T used`}
+                        icon={Layers}
+                        accentClass={rawSandStock < 50 ? "bg-red-500" : "bg-amber-500"}
+                        negative={rawSandStock < 0}
+                    />
+                    <StatCard
+                        label="Coal"
+                        value={`${coalStock.toFixed(2)} T`}
+                        sub={`${totalCoalIn.toFixed(2)} T in — ${totalCoalUsed.toFixed(2)} T used`}
+                        icon={Flame}
+                        accentClass={coalStock < 5 ? "bg-red-500" : "bg-gray-600"}
+                        negative={coalStock < 0}
                     />
                 </div>
             </div>

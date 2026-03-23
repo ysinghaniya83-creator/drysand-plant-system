@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Timestamp } from "firebase/firestore";
-import type { DailyClosingStock, ClosingStockItem, Item, ProductionEntry, BaggingEntry, LooseSale, OutwardEntry } from "@/types";
+import type { DailyClosingStock, ClosingStockItem, Item, ProductionEntry, BaggingEntry, LooseSale, OutwardEntry, InwardEntry } from "@/types";
 import { collectionListener, addDocument, updateDocument } from "@/lib/firestore";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -29,9 +29,10 @@ function formatDate(ts: Timestamp) {
     return ts.toDate().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
 }
 
-// Aggregate item stock from production outputs - bagging - outward dispatches
+// Aggregate item stock from all sources
 function computeSystemStock(
     items: Item[],
+    inwards: InwardEntry[],
     productions: ProductionEntry[],
     baggings: BaggingEntry[],
     outwards: OutwardEntry[],
@@ -40,7 +41,18 @@ function computeSystemStock(
     const stock: Record<string, number> = {};
     for (const item of items) stock[item.id] = 0;
 
-    // add production outputs
+    // Raw material inward (sand / coal)
+    const totalSandIn = inwards.filter((e) => e.materialType === "sand").reduce((s, e) => s + e.netWeight, 0);
+    const totalCoalIn = inwards.filter((e) => e.materialType === "coal").reduce((s, e) => s + e.netWeight, 0);
+    const totalSandUsed = productions.reduce((s, p) => s + p.sandUsed, 0);
+    const totalCoalUsed = productions.reduce((s, p) => s + p.coalUsed, 0);
+
+    for (const item of items) {
+        if (item.type === "raw_sand") stock[item.id] = totalSandIn - totalSandUsed;
+        else if (item.type === "coal") stock[item.id] = totalCoalIn - totalCoalUsed;
+    }
+
+    // add production outputs (finished sand grades)
     for (const p of productions) {
         for (const o of p.outputs) {
             stock[o.itemId] = (stock[o.itemId] ?? 0) + o.quantity;
@@ -66,6 +78,7 @@ export function ClosingStockEntry() {
     const isAdmin = appUser?.role === "admin";
     const [records, setRecords] = useState<DailyClosingStock[]>([]);
     const [items, setItems] = useState<Item[]>([]);
+    const [inwards, setInwards] = useState<InwardEntry[]>([]);
     const [productions, setProductions] = useState<ProductionEntry[]>([]);
     const [baggings, setBaggings] = useState<BaggingEntry[]>([]);
     const [outwards, setOutwards] = useState<OutwardEntry[]>([]);
@@ -79,12 +92,13 @@ export function ClosingStockEntry() {
 
     useEffect(() => collectionListener<DailyClosingStock>("closingStock", "date", setRecords, "desc"), []);
     useEffect(() => collectionListener<Item>("items", "name", setItems), []);
-    useEffect(() => collectionListener<ProductionEntry>("productions", "date", setProductions), []);
+    useEffect(() => collectionListener<InwardEntry>("inwardEntries", "date", setInwards), []);
+    useEffect(() => collectionListener<ProductionEntry>("productionEntries", "date", setProductions), []);
     useEffect(() => collectionListener<BaggingEntry>("baggings", "date", setBaggings), []);
     useEffect(() => collectionListener<OutwardEntry>("outwardEntries", "date", setOutwards), []);
     useEffect(() => collectionListener<LooseSale>("looseSales", "date", setLooseSales), []);
 
-    const systemStock = computeSystemStock(items, productions, baggings, outwards, looseSales);
+    const systemStock = computeSystemStock(items, inwards, productions, baggings, outwards, looseSales);
 
     function openNew() {
         setEditingId(null);
