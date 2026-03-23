@@ -1,101 +1,110 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
+import { Factory } from "lucide-react";
+
+// Map routes to readable page titles
+const PAGE_TITLES: Record<string, string> = {
+    "/dashboard": "Dashboard",
+    "/weighbridge": "Weighbridge",
+    "/purchase": "Purchase & Bills",
+    "/production": "Production",
+    "/bagging": "Bagging",
+    "/sales": "Sales",
+    "/expenses": "Expenses",
+    "/accounts": "Accounts",
+    "/profit": "Profit",
+    "/closing-stock": "Closing Stock",
+    "/vehicles": "Vehicle History",
+    "/employees": "Employees",
+    "/reports": "Reports",
+    "/masters": "Masters",
+    "/users": "User Roles",
+};
+
+function PageTitle() {
+    const pathname = usePathname();
+    const match = Object.keys(PAGE_TITLES).find(
+        (k) => pathname === k || pathname.startsWith(k + "/")
+    );
+    return <>{match ? PAGE_TITLES[match] : "Dry Sand Plant"}</>;
+}
+
+function StatusScreen({ emoji, title, body, onSignOut }: { emoji: string; title: string; body: string; onSignOut: () => void }) {
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-background">
+            <div className="text-center max-w-sm space-y-4 p-10 bg-card rounded-2xl shadow-sm border">
+                <div className="text-5xl">{emoji}</div>
+                <h1 className="text-lg font-semibold">{title}</h1>
+                <p className="text-sm text-muted-foreground">{body}</p>
+                <Button variant="outline" size="sm" onClick={onSignOut}>Sign out &amp; retry</Button>
+            </div>
+        </div>
+    );
+}
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
     const { user, appUser, loading, signOut } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
-        if (!loading && !user) {
-            router.push("/login");
-        }
+        if (!loading && !user) router.push("/login");
     }, [user, loading, router]);
+
+    async function handleSignOut() { await signOut(); router.push("/login"); }
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <p className="text-sm text-muted-foreground">Loading…</p>
+            <div className="min-h-screen flex items-center justify-center bg-background">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600">
+                        <Factory size={20} className="text-white" />
+                    </div>
+                    <p className="text-sm text-muted-foreground animate-pulse">Loading…</p>
+                </div>
             </div>
         );
     }
 
     if (!user) return null;
 
-    // Signed in but Firestore profile couldn't load (rules not set yet, or error)
     if (!appUser) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="text-center max-w-sm space-y-3 p-8">
-                    <div className="text-4xl">⚠️</div>
-                    <h1 className="text-lg font-bold">Profile not found</h1>
-                    <p className="text-sm text-muted-foreground">
-                        Could not load your user profile from the database.<br />
-                        Make sure Firestore security rules are published, then sign out and sign in again.
-                    </p>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={async () => { await signOut(); router.push("/login"); }}
-                    >
-                        Sign out & retry
-                    </Button>
-                </div>
-            </div>
-        );
+        return <StatusScreen emoji="⚠️" title="Profile not found" body="Could not load your user profile. Make sure Firestore rules are published, then sign out and try again." onSignOut={handleSignOut} />;
     }
-    if (appUser?.status === "pending") {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="text-center max-w-sm space-y-4 p-8">
-                    <div className="text-5xl">⏳</div>
-                    <h1 className="text-xl font-bold">Access Pending</h1>
-                    <p className="text-sm text-muted-foreground">
-                        Your account (<strong>{appUser.email}</strong>) is waiting for admin approval.
-                        The admin has been notified and will assign your access level shortly.
-                    </p>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={async () => { await signOut(); router.push("/login"); }}
-                    >
-                        Sign out
-                    </Button>
-                </div>
-            </div>
-        );
+    if (appUser.status === "pending") {
+        return <StatusScreen emoji="⏳" title="Access Pending" body={`Your account (${appUser.email}) is waiting for admin approval. You'll be notified once access is granted.`} onSignOut={handleSignOut} />;
     }
-
-    // User signed in but account is disabled
-    if (appUser?.status === "disabled") {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="text-center max-w-sm space-y-4 p-8">
-                    <div className="text-5xl">🚫</div>
-                    <h1 className="text-xl font-bold">Account Disabled</h1>
-                    <p className="text-sm text-muted-foreground">
-                        Your account has been disabled. Please contact the admin.
-                    </p>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={async () => { await signOut(); router.push("/login"); }}
-                    >
-                        Sign out
-                    </Button>
-                </div>
-            </div>
-        );
+    if (appUser.status === "disabled") {
+        return <StatusScreen emoji="🚫" title="Account Disabled" body="Your account has been disabled. Please contact the administrator." onSignOut={handleSignOut} />;
     }
 
     return (
-        <div className="flex min-h-screen bg-gray-50">
+        <div className="flex min-h-screen bg-background">
             <AppSidebar />
-            <main className="flex-1 ml-56 p-6 overflow-auto">{children}</main>
+            {/* Main content area */}
+            <div className="flex-1 flex flex-col ml-60 min-h-screen">
+                {/* Top header */}
+                <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b bg-card px-6 shrink-0 shadow-sm">
+                    <h2 className="text-[15px] font-semibold text-foreground">
+                        <PageTitle />
+                    </h2>
+                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                        <span className="hidden sm:block">
+                            {new Date().toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+                        </span>
+                        <div className="h-4 w-px bg-border" />
+                        <span className="font-medium text-foreground">{appUser.name ?? appUser.email}</span>
+                    </div>
+                </header>
+                {/* Page content */}
+                <main className="flex-1 overflow-auto p-6">
+                    {children}
+                </main>
+            </div>
         </div>
     );
 }

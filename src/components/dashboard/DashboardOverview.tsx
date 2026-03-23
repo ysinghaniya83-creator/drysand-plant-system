@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 import type { InwardEntry, LooseSale, BagSale, ProductionEntry, PurchaseRegisterEntry, ExpenseEntry, BaggingEntry } from "@/types";
 import { collectionListener } from "@/lib/firestore";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowDownToLine, TrendingUp, Factory, Package, Banknote, ShoppingCart, Receipt, BarChart2 } from "lucide-react";
 
 function isToday(ts: Timestamp) {
     const d = ts.toDate();
@@ -18,11 +18,19 @@ function isThisMonth(ts: Timestamp) {
     return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
 }
 
-interface Tile {
-    label: string;
-    value: string;
-    sub?: string;
-    color?: string;
+function StatCard({ label, value, sub, icon: Icon, color }: { label: string; value: string; sub?: string; icon: React.ElementType; color: string }) {
+    return (
+        <div className="bg-card rounded-xl border p-5 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
+            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${color}`}>
+                <Icon size={18} className="text-white" />
+            </div>
+            <div className="min-w-0">
+                <p className="text-xs font-medium text-muted-foreground mb-1">{label}</p>
+                <p className="text-xl font-bold text-foreground leading-tight tabular-nums">{value}</p>
+                {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
+            </div>
+        </div>
+    );
 }
 
 export function DashboardOverview() {
@@ -42,10 +50,8 @@ export function DashboardOverview() {
     useEffect(() => collectionListener<PurchaseRegisterEntry>("purchaseRegister", "date", setPurchases), []);
     useEffect(() => collectionListener<ExpenseEntry>("expenses", "date", setExpenses), []);
 
-    // Today's figures
     const todayInward = inwards.filter((r) => isToday(r.date));
     const todayInwardTons = todayInward.reduce((s, r) => s + r.netWeight, 0);
-    const todayInwardVehicles = todayInward.length;
 
     const todayProduction = productions.filter((r) => isToday(r.date));
     const todayProdTons = todayProduction.reduce((s, r) => s + r.outputs.reduce((x, o) => x + o.quantity, 0), 0);
@@ -57,75 +63,75 @@ export function DashboardOverview() {
     const todayBagging = baggings.filter((r) => isToday(r.date));
     const todayBags = todayBagging.reduce((s, r) => s + r.numberOfBags, 0);
 
-    // Month figures
     const monthPurchase = purchases.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + r.amount, 0);
     const monthRevenue = looseSales.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + r.totalAmount, 0)
         + bagSales.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + r.totalAmount, 0);
     const monthExpenses = expenses.filter((r) => isThisMonth(r.date)).reduce((s, r) => s + r.amount, 0);
     const monthProfit = monthRevenue - monthPurchase - monthExpenses;
 
-    const tiles: Tile[] = [
-        { label: "Today's Inward", value: `${todayInwardTons.toFixed(2)} T`, sub: `${todayInwardVehicles} vehicle${todayInwardVehicles !== 1 ? "s" : ""}`, color: "text-blue-600" },
-        { label: "Today's Production", value: `${todayProdTons.toFixed(2)} T`, sub: `${todayProduction.length} batch${todayProduction.length !== 1 ? "es" : ""}`, color: "text-purple-600" },
-        { label: "Today's Sales", value: `₹${todaySaleAmount.toLocaleString("en-IN")}`, sub: `${todayLooseSales.length + todayBagSales.length} invoice${(todayLooseSales.length + todayBagSales.length) !== 1 ? "s" : ""}`, color: "text-green-600" },
-        { label: "Today's Bagging", value: `${todayBags.toLocaleString("en-IN")} bags`, sub: `${todayBagging.length} batch${todayBagging.length !== 1 ? "es" : ""}`, color: "text-orange-600" },
-        { label: "Month Revenue", value: `₹${monthRevenue.toLocaleString("en-IN")}`, color: "text-emerald-700" },
-        { label: "Month Purchases", value: `₹${monthPurchase.toLocaleString("en-IN")}`, color: "text-orange-700" },
-        { label: "Month Expenses", value: `₹${monthExpenses.toLocaleString("en-IN")}`, color: "text-red-600" },
-        { label: "Month Net Profit", value: `₹${monthProfit.toLocaleString("en-IN")}`, color: monthProfit >= 0 ? "text-emerald-700 font-bold" : "text-red-700 font-bold" },
-    ];
+    const recentInward = [...inwards].sort((a, b) => b.date.seconds - a.date.seconds).slice(0, 6);
 
-    // Recent inward (last 5)
-    const recentInward = [...inwards].sort((a, b) => b.date.seconds - a.date.seconds).slice(0, 5);
+    const today = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 max-w-6xl">
             <div>
-                <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-                <p className="text-sm text-muted-foreground">Live plant overview — {new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</p>
+                <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+                <p className="text-sm text-muted-foreground mt-0.5">{today}</p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {tiles.map((tile) => (
-                    <Card key={tile.label}>
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-xs font-mono text-muted-foreground uppercase tracking-wider">{tile.label}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className={`text-xl font-semibold font-mono ${tile.color ?? ""}`}>{tile.value}</p>
-                            {tile.sub && <p className="text-xs text-muted-foreground mt-0.5">{tile.sub}</p>}
-                        </CardContent>
-                    </Card>
-                ))}
+            {/* Today */}
+            <div>
+                <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Today</h2>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <StatCard label="Inward" value={`${todayInwardTons.toFixed(2)} T`} sub={`${todayInward.length} vehicles`} icon={ArrowDownToLine} color="bg-blue-500" />
+                    <StatCard label="Production" value={`${todayProdTons.toFixed(2)} T`} sub={`${todayProduction.length} batches`} icon={Factory} color="bg-violet-500" />
+                    <StatCard label="Sales" value={`₹${todaySaleAmount.toLocaleString("en-IN")}`} sub={`${todayLooseSales.length + todayBagSales.length} invoices`} icon={TrendingUp} color="bg-emerald-500" />
+                    <StatCard label="Bagging" value={`${todayBags.toLocaleString("en-IN")} bags`} sub={`${todayBagging.length} batches`} icon={Package} color="bg-orange-500" />
+                </div>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-sm font-mono text-muted-foreground uppercase tracking-wider">Recent Inward Entries</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {recentInward.length === 0 ? (
-                        <p className="text-sm text-muted-foreground text-center py-4">No inward entries yet.</p>
-                    ) : (
-                        <div className="divide-y">
-                            {recentInward.map((r) => (
-                                <div key={r.id} className="flex items-center justify-between py-2">
-                                    <div>
-                                        <span className="text-sm font-medium font-mono">{r.vehicleNumber}</span>
-                                        <span className="mx-2 text-muted-foreground">—</span>
-                                        <span className="text-sm">{r.partyName}</span>
-                                        <span className="ml-2 text-xs text-muted-foreground capitalize">{r.materialType}</span>
-                                    </div>
-                                    <div className="text-right">
-                                        <span className="text-sm font-mono font-semibold text-blue-600">{r.netWeight.toFixed(2)} T</span>
-                                        <span className="ml-2 text-xs text-muted-foreground">{r.date.toDate().toLocaleDateString("en-IN")}</span>
-                                    </div>
+            {/* This month */}
+            <div>
+                <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">This Month</h2>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <StatCard label="Revenue" value={`₹${monthRevenue.toLocaleString("en-IN")}`} icon={Banknote} color="bg-emerald-600" />
+                    <StatCard label="Purchases" value={`₹${monthPurchase.toLocaleString("en-IN")}`} icon={ShoppingCart} color="bg-amber-500" />
+                    <StatCard label="Expenses" value={`₹${monthExpenses.toLocaleString("en-IN")}`} icon={Receipt} color="bg-red-500" />
+                    <StatCard label="Net Profit" value={`₹${monthProfit.toLocaleString("en-IN")}`} icon={BarChart2} color={monthProfit >= 0 ? "bg-indigo-600" : "bg-red-600"} />
+                </div>
+            </div>
+
+            {/* Recent inward */}
+            <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+                <div className="px-5 py-4 border-b">
+                    <h2 className="text-sm font-semibold text-foreground">Recent Inward Entries</h2>
+                </div>
+                {recentInward.length === 0 ? (
+                    <div className="text-center py-12 text-sm text-muted-foreground">No inward entries yet.</div>
+                ) : (
+                    <div className="divide-y">
+                        {recentInward.map((r) => (
+                            <div key={r.id} className="flex items-center gap-4 px-5 py-3 hover:bg-muted/30 transition-colors">
+                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 shrink-0">
+                                    <ArrowDownToLine size={14} className="text-blue-600" />
                                 </div>
-                            ))}
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+                                <div className="flex-1 min-w-0">
+                                    <span className="text-[13px] font-semibold tabular-nums">{r.vehicleNumber}</span>
+                                    <span className="mx-1.5 text-muted-foreground/50">·</span>
+                                    <span className="text-[13px] text-muted-foreground">{r.partyName}</span>
+                                </div>
+                                <div className="flex items-center gap-3 shrink-0">
+                                    <span className="text-[11px] bg-slate-100 text-slate-600 rounded-full px-2 py-0.5 capitalize font-medium">{r.materialType}</span>
+                                    <span className="text-[13px] font-bold text-blue-600 tabular-nums">{r.netWeight.toFixed(2)} T</span>
+                                    <span className="text-[11px] text-muted-foreground">{r.date.toDate().toLocaleDateString("en-IN", { day: "2-digit", month: "short" })}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
+
