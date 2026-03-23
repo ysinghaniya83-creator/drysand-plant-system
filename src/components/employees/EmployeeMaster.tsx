@@ -55,6 +55,7 @@ interface EmployeeForm {
     licenceNumber: string;
     licenceExpiry: string;
     isActive: boolean;
+    documentUrls: string[];
 }
 
 const EMPTY_FORM: EmployeeForm = {
@@ -72,6 +73,7 @@ const EMPTY_FORM: EmployeeForm = {
     licenceNumber: "",
     licenceExpiry: "",
     isActive: true,
+    documentUrls: [],
 };
 
 export function EmployeeMaster() {
@@ -83,6 +85,7 @@ export function EmployeeMaster() {
     const [form, setForm] = useState<EmployeeForm>({ ...EMPTY_FORM });
     const [saving, setSaving] = useState(false);
     const [showInactive, setShowInactive] = useState(false);
+    const [newDocUrl, setNewDocUrl] = useState("");
 
     useEffect(() => collectionListener<Employee>("employees", "name", setEmployees), []);
 
@@ -91,6 +94,7 @@ export function EmployeeMaster() {
     function openAdd() {
         setEditing(null);
         setForm({ ...EMPTY_FORM, joiningDate: new Date().toISOString().split("T")[0] });
+        setNewDocUrl("");
         setOpen(true);
     }
 
@@ -111,7 +115,9 @@ export function EmployeeMaster() {
             licenceNumber: emp.licenceNumber ?? "",
             licenceExpiry: emp.licenceExpiry ? emp.licenceExpiry.toDate().toISOString().split("T")[0] : "",
             isActive: emp.isActive,
+            documentUrls: emp.documentUrls ?? [],
         });
+        setNewDocUrl("");
         setOpen(true);
     }
 
@@ -134,7 +140,7 @@ export function EmployeeMaster() {
                 bankIfsc: form.bankIfsc.trim() || null,
                 licenceNumber: form.licenceNumber.trim() || null,
                 licenceExpiry: form.licenceExpiry ? Timestamp.fromDate(new Date(form.licenceExpiry)) : null,
-                documentUrls: editing?.documentUrls ?? [],
+                documentUrls: form.documentUrls.filter((u) => u.trim()),
                 isActive: form.isActive,
                 createdBy: user?.uid || "",
             };
@@ -189,7 +195,12 @@ export function EmployeeMaster() {
                             <TableRow key={emp.id}>
                                 <TableCell>
                                     <div className="text-sm font-medium">{emp.name}</div>
-                                    {emp.phone && <div className="text-xs text-muted-foreground">{emp.phone}</div>}
+                                    <div className="flex gap-2 text-xs text-muted-foreground">
+                                        {emp.phone && <span>{emp.phone}</span>}
+                                        {emp.documentUrls?.length > 0 && (
+                                            <span className="text-blue-500">{emp.documentUrls.length} doc{emp.documentUrls.length !== 1 ? "s" : ""}</span>
+                                        )}
+                                    </div>
                                 </TableCell>
                                 <TableCell className="text-sm">{emp.designation || "—"}</TableCell>
                                 <TableCell><Badge variant="outline" className="text-xs">{TYPE_LABELS[emp.type]}</Badge></TableCell>
@@ -285,6 +296,53 @@ export function EmployeeMaster() {
                             <div className="space-y-1">
                                 <Label>Licence Expiry Date</Label>
                                 <Input type="date" value={form.licenceExpiry} onChange={(e) => setForm({ ...form, licenceExpiry: e.target.value })} />
+                            </div>
+                            {/* Document URLs */}
+                            <div className="col-span-2 space-y-2 pt-1">
+                                <Label>Document Links</Label>
+                                <p className="text-xs text-muted-foreground -mt-1">Paste Google Drive / WhatsApp / cloud links to documents.</p>
+                                {form.documentUrls.map((url, i) => (
+                                    <div key={i} className="flex items-center gap-2">
+                                        <a href={url} target="_blank" rel="noreferrer" className="flex-1 text-xs text-blue-600 underline truncate">{url}</a>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-6 text-xs text-destructive shrink-0"
+                                            onClick={() => setForm({ ...form, documentUrls: form.documentUrls.filter((_, j) => j !== i) })}
+                                        >
+                                            Remove
+                                        </Button>
+                                    </div>
+                                ))}
+                                <div className="flex gap-2">
+                                    <Input
+                                        value={newDocUrl}
+                                        onChange={(e) => setNewDocUrl(e.target.value)}
+                                        placeholder="https://drive.google.com/…"
+                                        className="h-8 text-sm flex-1"
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter" && newDocUrl.trim()) {
+                                                e.preventDefault();
+                                                setForm({ ...form, documentUrls: [...form.documentUrls, newDocUrl.trim()] });
+                                                setNewDocUrl("");
+                                            }
+                                        }}
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        className="h-8 shrink-0"
+                                        disabled={!newDocUrl.trim()}
+                                        onClick={() => {
+                                            setForm({ ...form, documentUrls: [...form.documentUrls, newDocUrl.trim()] });
+                                            setNewDocUrl("");
+                                        }}
+                                    >
+                                        Add
+                                    </Button>
+                                </div>
                             </div>
                             <div className="flex items-center gap-2 col-span-2 pt-1">
                                 <Switch checked={form.isActive} onCheckedChange={(v: boolean) => setForm({ ...form, isActive: v })} id="active-toggle" />
