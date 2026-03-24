@@ -25,6 +25,7 @@ function StatCard({
     icon: Icon,
     accentClass,
     negative,
+    delay = 0,
 }: {
     label: string;
     value: string;
@@ -32,9 +33,13 @@ function StatCard({
     icon: React.ElementType;
     accentClass: string;
     negative?: boolean;
+    delay?: number;
 }) {
     return (
-        <div className="card p-5 flex flex-col gap-4 hover:shadow-md transition-shadow duration-200">
+        <div
+            className="card p-5 flex flex-col gap-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 animate-slide-up"
+            style={{ animationDelay: `${delay}ms` }}
+        >
             <div className="flex items-center justify-between">
                 <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400">{label}</p>
                 <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${accentClass}`}>
@@ -155,11 +160,11 @@ export function DashboardOverview() {
 
             {/* Alerts */}
             {totalAlerts > 0 ? (
-                <div>
+                <div className="animate-slide-up">
                     <SectionHeader label={`Alerts (${totalAlerts})`} />
                     <div className="space-y-2">
-                        {rawAlerts.map((a) => (
-                            <div key={a.label} className={`flex items-start gap-3 px-4 py-3 rounded-xl border text-sm ${a.level === "critical" ? "bg-red-50 border-red-200 text-red-800" : "bg-orange-50 border-orange-200 text-orange-800"}`}>
+                        {rawAlerts.map((a, i) => (
+                            <div key={a.label} className={`flex items-start gap-3 px-4 py-3 rounded-xl border text-sm animate-slide-up ${a.level === "critical" ? "bg-red-50 border-red-200 text-red-800" : "bg-orange-50 border-orange-200 text-orange-800"}`} style={{ animationDelay: `${i * 60}ms` }}>
                                 <AlertTriangle size={16} className="shrink-0 mt-0.5" />
                                 <div>
                                     <span className="font-semibold">{a.label}</span>
@@ -197,7 +202,7 @@ export function DashboardOverview() {
                     </div>
                 </div>
             ) : (
-                <div className="flex items-center gap-2 px-4 py-3 rounded-xl border border-green-100 bg-green-50 text-green-700 text-sm">
+                <div className="flex items-center gap-2 px-4 py-3 rounded-xl border border-green-100 bg-green-50 text-green-700 text-sm animate-slide-up">
                     <CheckCircle size={16} className="shrink-0" />
                     <span className="font-medium">All clear — no active alerts</span>
                 </div>
@@ -207,34 +212,10 @@ export function DashboardOverview() {
             <div>
                 <SectionHeader label="Today" />
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-                    <StatCard
-                        label="Inward"
-                        value={`${todayInwardTons.toFixed(2)} T`}
-                        sub={`${todayInward.length} vehicle${todayInward.length !== 1 ? "s" : ""}`}
-                        icon={ArrowDownToLine}
-                        accentClass="bg-emerald-500"
-                    />
-                    <StatCard
-                        label="Production"
-                        value={`${todayProdTons.toFixed(2)} T`}
-                        sub={`${todayProduction.length} batch${todayProduction.length !== 1 ? "es" : ""}`}
-                        icon={Factory}
-                        accentClass="bg-blue-500"
-                    />
-                    <StatCard
-                        label="Sales"
-                        value={`₹${todaySaleAmount.toLocaleString("en-IN")}`}
-                        sub={`${todayLooseSales.length + todayBagSales.length} invoice${(todayLooseSales.length + todayBagSales.length) !== 1 ? "s" : ""}`}
-                        icon={TrendingUp}
-                        accentClass="bg-brand-600"
-                    />
-                    <StatCard
-                        label="Bagging"
-                        value={`${todayBags.toLocaleString("en-IN")}`}
-                        sub={`bags · ${todayBagging.length} batch${todayBagging.length !== 1 ? "es" : ""}`}
-                        icon={Package}
-                        accentClass="bg-violet-500"
-                    />
+                    <StatCard label="Inward" value={`${todayInwardTons.toFixed(2)} T`} sub={`${todayInward.length} vehicle${todayInward.length !== 1 ? "s" : ""}`} icon={ArrowDownToLine} accentClass="bg-emerald-500" delay={0} />
+                    <StatCard label="Production" value={`${todayProdTons.toFixed(2)} T`} sub={`${todayProduction.length} batch${todayProduction.length !== 1 ? "es" : ""}`} icon={Factory} accentClass="bg-blue-500" delay={75} />
+                    <StatCard label="Sales" value={`₹${todaySaleAmount.toLocaleString("en-IN")}`} sub={`${todayLooseSales.length + todayBagSales.length} invoice${(todayLooseSales.length + todayBagSales.length) !== 1 ? "s" : ""}`} icon={TrendingUp} accentClass="bg-brand-600" delay={150} />
+                    <StatCard label="Bagging" value={`${todayBags.toLocaleString("en-IN")}`} sub={`bags · ${todayBagging.length} batch${todayBagging.length !== 1 ? "es" : ""}`} icon={Package} accentClass="bg-violet-500" delay={225} />
                 </div>
             </div>
 
@@ -242,22 +223,8 @@ export function DashboardOverview() {
             <div>
                 <SectionHeader label="Raw Material Stock" />
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-                    <StatCard
-                        label="Raw Sand"
-                        value={`${rawSandStock.toFixed(2)} T`}
-                        sub={`${totalSandIn.toFixed(2)} T in — ${totalSandUsed.toFixed(2)} T used`}
-                        icon={Layers}
-                        accentClass={rawSandStock < 50 ? "bg-red-500" : "bg-amber-500"}
-                        negative={rawSandStock < 0}
-                    />
-                    <StatCard
-                        label="Coal"
-                        value={`${coalStock.toFixed(2)} T`}
-                        sub={`${totalCoalIn.toFixed(2)} T in — ${totalCoalUsed.toFixed(2)} T used`}
-                        icon={Flame}
-                        accentClass={coalStock < 5 ? "bg-red-500" : "bg-gray-600"}
-                        negative={coalStock < 0}
-                    />
+                    <StatCard label="Raw Sand" value={`${rawSandStock.toFixed(2)} T`} sub={`${totalSandIn.toFixed(2)} T in — ${totalSandUsed.toFixed(2)} T used`} icon={Layers} accentClass={rawSandStock < 50 ? "bg-red-500" : "bg-amber-500"} negative={rawSandStock < 0} delay={0} />
+                    <StatCard label="Coal" value={`${coalStock.toFixed(2)} T`} sub={`${totalCoalIn.toFixed(2)} T in — ${totalCoalUsed.toFixed(2)} T used`} icon={Flame} accentClass={coalStock < 5 ? "bg-red-500" : "bg-gray-600"} negative={coalStock < 0} delay={75} />
                 </div>
             </div>
 
@@ -265,36 +232,15 @@ export function DashboardOverview() {
             <div>
                 <SectionHeader label="This Month" />
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
-                    <StatCard
-                        label="Revenue"
-                        value={`₹${monthRevenue.toLocaleString("en-IN")}`}
-                        icon={Banknote}
-                        accentClass="bg-emerald-600"
-                    />
-                    <StatCard
-                        label="Purchases"
-                        value={`₹${monthPurchase.toLocaleString("en-IN")}`}
-                        icon={ShoppingCart}
-                        accentClass="bg-orange-500"
-                    />
-                    <StatCard
-                        label="Expenses"
-                        value={`₹${monthExpenses.toLocaleString("en-IN")}`}
-                        icon={Receipt}
-                        accentClass="bg-red-400"
-                    />
-                    <StatCard
-                        label="Net Profit"
-                        value={`₹${monthProfit.toLocaleString("en-IN")}`}
-                        icon={monthProfit >= 0 ? BarChart2 : TrendingDown}
-                        accentClass={monthProfit >= 0 ? "bg-brand-600" : "bg-red-500"}
-                        negative={monthProfit < 0}
-                    />
+                    <StatCard label="Revenue" value={`₹${monthRevenue.toLocaleString("en-IN")}`} icon={Banknote} accentClass="bg-emerald-600" delay={0} />
+                    <StatCard label="Purchases" value={`₹${monthPurchase.toLocaleString("en-IN")}`} icon={ShoppingCart} accentClass="bg-orange-500" delay={75} />
+                    <StatCard label="Expenses" value={`₹${monthExpenses.toLocaleString("en-IN")}`} icon={Receipt} accentClass="bg-red-400" delay={150} />
+                    <StatCard label="Net Profit" value={`₹${monthProfit.toLocaleString("en-IN")}`} icon={monthProfit >= 0 ? BarChart2 : TrendingDown} accentClass={monthProfit >= 0 ? "bg-brand-600" : "bg-red-500"} negative={monthProfit < 0} delay={225} />
                 </div>
             </div>
 
             {/* Recent inward entries */}
-            <div>
+            <div className="animate-slide-up delay-300">
                 <SectionHeader label="Recent Inward Entries" />
                 <div className="card overflow-hidden">
                     {recentInward.length === 0 ? (

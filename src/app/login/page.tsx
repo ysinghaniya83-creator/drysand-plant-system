@@ -42,7 +42,7 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen flex">
             {/* Left panel — branding */}
-            <div className="hidden lg:flex lg:w-[42%] flex-col justify-between bg-[#1a0900] p-12 relative overflow-hidden">
+            <div className="hidden lg:flex lg:w-[42%] flex-col justify-between bg-[#1a0900] p-12 relative overflow-hidden animate-slide-in-left">
                 {/* Background gradients */}
                 <div className="absolute inset-0 pointer-events-none">
                     <div className="absolute -top-40 -left-40 w-[28rem] h-[28rem] rounded-full bg-brand-600/15 blur-3xl" />
@@ -51,7 +51,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Logo */}
-                <div className="relative flex items-center gap-3">
+                <div className="relative flex items-center gap-3 animate-slide-up delay-150">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 shadow-lg shadow-brand-600/30">
                         <Factory size={18} className="text-white" />
                     </div>
@@ -63,7 +63,7 @@ export default function LoginPage() {
 
                 {/* Center content */}
                 <div className="relative space-y-8">
-                    <div className="space-y-4">
+                    <div className="space-y-4 animate-slide-up delay-225">
                         <div className="inline-flex items-center gap-2 bg-brand-600/15 border border-brand-600/20 rounded-full px-3 py-1">
                             <div className="h-1.5 w-1.5 rounded-full bg-brand-400 animate-pulse" />
                             <span className="text-brand-300 text-[11px] font-semibold uppercase tracking-wider">Live Operations</span>
@@ -77,9 +77,13 @@ export default function LoginPage() {
                     </div>
 
                     {/* Feature icons */}
-                    <div className="flex flex-wrap gap-2.5">
-                        {features.map(({ icon: Icon, label }) => (
-                            <div key={label} className="flex items-center gap-2 bg-white/5 border border-white/8 rounded-lg px-3 py-1.5">
+                    <div className="flex flex-wrap gap-2.5 animate-slide-up delay-375">
+                        {features.map(({ icon: Icon, label }, i) => (
+                            <div
+                                key={label}
+                                className="flex items-center gap-2 bg-white/5 border border-white/8 rounded-lg px-3 py-1.5 animate-slide-up"
+                                style={{ animationDelay: `${375 + i * 60}ms` }}
+                            >
                                 <Icon size={13} className="text-white/50" />
                                 <span className="text-[12px] text-white/55 font-medium">{label}</span>
                             </div>
@@ -94,7 +98,7 @@ export default function LoginPage() {
             </div>
 
             {/* Right panel — sign in */}
-            <div className="flex flex-1 flex-col items-center justify-center px-6 bg-sand-50">
+            <div className="flex flex-1 flex-col items-center justify-center px-6 bg-sand-50 animate-slide-in-right">
                 {/* Mobile logo */}
                 <div className="flex lg:hidden items-center gap-3 mb-10">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 shadow-sm shadow-brand-600/30">
@@ -107,7 +111,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Sign-in card */}
-                <div className="w-full max-w-[360px]">
+                <div className="w-full max-w-[360px] animate-scale-in delay-150">
                     <div className="bg-white rounded-2xl border border-sand-200 shadow-sm shadow-black/5 p-8 space-y-7">
                         {/* Header */}
                         <div className="space-y-1.5">

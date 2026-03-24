@@ -75,12 +75,23 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-background">
-                <div className="flex flex-col items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 shadow-sm shadow-brand-600/30">
-                        <Factory size={20} className="text-white" />
+            <div className="min-h-screen flex items-center justify-center bg-background animate-fade-in">
+                <div className="flex flex-col items-center gap-5">
+                    {/* Spinner ring around icon */}
+                    <div className="relative flex h-16 w-16 items-center justify-center">
+                        {/* Outer spinning ring */}
+                        <div className="absolute inset-0 rounded-full border-[3px] border-sand-200 border-t-brand-600 border-r-brand-400 animate-spin-ring" />
+                        {/* Inner glow ring */}
+                        <div className="absolute inset-1 rounded-full border border-brand-600/10" />
+                        {/* Icon */}
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 shadow-md shadow-brand-600/30 animate-float">
+                            <Factory size={20} className="text-white" />
+                        </div>
                     </div>
-                    <p className="text-sm text-muted-foreground animate-pulse">Loading…</p>
+                    <div className="flex flex-col items-center gap-1 animate-slide-up delay-150">
+                        <p className="text-[13px] font-semibold text-foreground">Dry Sand Plant</p>
+                        <p className="text-xs text-muted-foreground">Loading your workspace…</p>
+                    </div>
                 </div>
             </div>
         );
