@@ -166,31 +166,32 @@ export function DashboardOverview() {
                         {rawAlerts.map((a, i) => (
                             <div key={a.label} className={`flex items-start gap-3 px-4 py-3 rounded-xl border text-sm animate-slide-up ${a.level === "critical" ? "bg-red-50 border-red-200 text-red-800" : "bg-orange-50 border-orange-200 text-orange-800"}`} style={{ animationDelay: `${i * 60}ms` }}>
                                 <AlertTriangle size={16} className="shrink-0 mt-0.5" />
-                                <div>
+                                <div className="flex flex-col gap-0.5">
                                     <span className="font-semibold">{a.label}</span>
-                                    <span className="ml-2 font-mono">{a.value}</span>
+                                    <span className="font-mono text-[12px] opacity-80">{a.value}</span>
                                 </div>
                             </div>
                         ))}
                         {stockShortageAlerts.map((it) => (
                             <div key={it.itemId} className="flex items-start gap-3 px-4 py-3 rounded-xl border bg-yellow-50 border-yellow-200 text-yellow-800 text-sm">
                                 <AlertTriangle size={16} className="shrink-0 mt-0.5" />
-                                <div>
+                                <div className="flex flex-col gap-0.5">
                                     <span className="font-semibold">Stock shortage — {it.itemName}</span>
-                                    <span className="ml-2 font-mono">{it.shortage.toFixed(3)} T system−physical</span>
-                                    {latestClosing && <span className="ml-2 text-xs text-yellow-600">(as of {latestClosing.date.toDate().toLocaleDateString("en-IN", { day: "2-digit", month: "short" })})</span>}
+                                    <span className="font-mono text-[12px] opacity-80">
+                                        {it.shortage.toFixed(3)} T system−physical
+                                        {latestClosing && <span className="ml-1 text-[11px]">(as of {latestClosing.date.toDate().toLocaleDateString("en-IN", { day: "2-digit", month: "short" })})</span>}
+                                    </span>
                                 </div>
                             </div>
                         ))}
                         {licenceAlerts.map((a) => (
                             <div key={a.name} className={`flex items-start gap-3 px-4 py-3 rounded-xl border text-sm ${a.daysLeft < 0 ? "bg-red-50 border-red-200 text-red-800" : "bg-orange-50 border-orange-200 text-orange-800"}`}>
                                 <AlertTriangle size={16} className="shrink-0 mt-0.5" />
-                                <div>
+                                <div className="flex flex-col gap-0.5">
                                     <span className="font-semibold">
-                                        {a.daysLeft < 0 ? "Licence expired" : "Licence expiring soon"}
-                                        {" — "}{a.name}
+                                        {a.daysLeft < 0 ? "Licence expired" : "Licence expiring soon"} — {a.name}
                                     </span>
-                                    <span className="ml-2 text-xs">
+                                    <span className="text-[12px] opacity-80">
                                         {a.daysLeft < 0
                                             ? `Expired ${Math.abs(a.daysLeft)} day${Math.abs(a.daysLeft) !== 1 ? "s" : ""} ago`
                                             : `Expires in ${a.daysLeft} day${a.daysLeft !== 1 ? "s" : ""}`}
@@ -253,9 +254,9 @@ export function DashboardOverview() {
                             <thead>
                                 <tr>
                                     <th>Vehicle</th>
-                                    <th>Party</th>
-                                    <th>Material</th>
-                                    <th className="text-right">Net Weight</th>
+                                    <th className="hidden sm:table-cell">Party</th>
+                                    <th className="hidden sm:table-cell">Material</th>
+                                    <th className="text-right">Net Wt</th>
                                     <th className="text-right">Date</th>
                                 </tr>
                             </thead>
@@ -263,12 +264,13 @@ export function DashboardOverview() {
                                 {recentInward.map((r) => (
                                     <tr key={r.id}>
                                         <td>
-                                            <span className="font-bold text-gray-900 tabular-nums tracking-wide text-[13px]">
+                                            <p className="font-bold text-gray-900 tabular-nums tracking-wide text-[13px]">
                                                 {r.vehicleNumber}
-                                            </span>
+                                            </p>
+                                            <p className="sm:hidden text-[11px] text-gray-400 mt-0.5 capitalize">{r.materialType} · {r.partyName}</p>
                                         </td>
-                                        <td className="text-gray-600 text-[13px]">{r.partyName}</td>
-                                        <td>
+                                        <td className="hidden sm:table-cell text-gray-600 text-[13px]">{r.partyName}</td>
+                                        <td className="hidden sm:table-cell">
                                             <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-600 capitalize">
                                                 {r.materialType}
                                             </span>

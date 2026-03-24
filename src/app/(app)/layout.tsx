@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Button } from "@/components/ui/button";
-import { Factory } from "lucide-react";
+import { Factory, Menu } from "lucide-react";
 import { canAccessRoute } from "@/lib/permissions";
 
 // Map routes to readable page titles
@@ -66,6 +66,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     const { user, appUser, loading, signOut } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     useEffect(() => {
         if (!loading && !user) router.push("/login");
@@ -129,13 +130,20 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
     return (
         <div className="flex min-h-screen bg-background">
-            <AppSidebar />
+            <AppSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
             {/* Main content area */}
-            <div className="flex-1 flex flex-col ml-60 min-h-screen">
+            <div className="flex-1 flex flex-col lg:ml-60 min-h-screen">
                 {/* Top header */}
-                <header className="sticky top-0 z-40 flex h-13 items-center justify-between border-b border-sand-100 bg-white/95 backdrop-blur-sm px-6 shrink-0 gap-4">
-                    {/* Page title */}
-                    <div className="flex items-center gap-2 min-w-0">
+                <header className="sticky top-0 z-40 flex h-13 items-center justify-between border-b border-sand-100 bg-white/95 backdrop-blur-sm px-4 lg:px-6 shrink-0 gap-3">
+                    {/* Hamburger + Page title */}
+                    <div className="flex items-center gap-2.5 min-w-0">
+                        <button
+                            onClick={() => setSidebarOpen(true)}
+                            className="lg:hidden flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-sand-50 shrink-0"
+                            aria-label="Open menu"
+                        >
+                            <Menu size={18} />
+                        </button>
                         <h2 className="text-[15px] font-bold text-foreground tracking-tight truncate">
                             <PageTitle />
                         </h2>
@@ -165,7 +173,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 </header>
 
                 {/* Page content */}
-                <main className="flex-1 overflow-auto p-6 md:p-8">
+                <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
                     {children}
                 </main>
             </div>

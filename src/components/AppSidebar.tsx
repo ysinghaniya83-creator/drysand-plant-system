@@ -78,7 +78,7 @@ const navSections: NavSection[] = [
     },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
     const pathname = usePathname();
     const router = useRouter();
     const { appUser, signOut } = useAuth();
@@ -104,7 +104,19 @@ export function AppSidebar() {
         .toUpperCase();
 
     return (
-        <aside className="fixed inset-y-0 left-0 z-50 flex w-60 flex-col bg-white border-r border-sand-100 select-none">
+        <>
+            {/* Mobile overlay */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+                    onClick={onClose}
+                />
+            )}
+        <aside className={cn(
+            "fixed inset-y-0 left-0 z-50 flex w-60 flex-col bg-white border-r border-sand-100 select-none transition-transform duration-300",
+            "lg:translate-x-0",
+            isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        )}>
             {/* Brand */}
             <div className="flex items-center gap-3 px-5 py-5 border-b border-sand-100">
                 <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 shrink-0 shadow-sm shadow-brand-600/30">
@@ -135,6 +147,7 @@ export function AppSidebar() {
                                     <Link
                                         key={item.href}
                                         href={item.href}
+                                        onClick={onClose}
                                         className={cn(
                                             "group flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13.5px] font-medium transition-all duration-150",
                                             active
@@ -186,5 +199,6 @@ export function AppSidebar() {
                 </div>
             </div>
         </aside>
+        </>
     );
 }
