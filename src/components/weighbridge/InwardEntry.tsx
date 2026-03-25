@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Timestamp } from "firebase/firestore";
-import type { InwardEntry as InwardEntryType, InwardMaterialType, Party } from "@/types";
+import type { InwardEntry as InwardEntryType, InwardMaterialType, Party, Item } from "@/types";
 import {
     collectionListener,
     addDocument,
@@ -52,12 +52,18 @@ const MAT_COLORS: Record<InwardMaterialType, string> = {
     coal: "bg-gray-200 text-gray-700",
 };
 
+function deriveMaterialType(itemType: string): InwardMaterialType {
+    return itemType === "coal" ? "coal" : "sand";
+}
+
 interface InwardForm {
     date: string;
     vehicleNumber: string;
     partyId: string;
     partyName: string;
     materialType: InwardMaterialType;
+    itemId: string;
+    itemName: string;
     royaltyNumber: string;
     royaltyWeight: string;
     grossWeight: string;
@@ -72,6 +78,8 @@ const EMPTY_FORM: InwardForm = {
     partyId: "",
     partyName: "",
     materialType: "sand",
+    itemId: "",
+    itemName: "",
     royaltyNumber: "",
     royaltyWeight: "",
     grossWeight: "",
@@ -85,6 +93,7 @@ export function InwardEntryList() {
     const isAdmin = appUser?.role === "admin";
     const [entries, setEntries] = useState<InwardEntryType[]>([]);
     const [parties, setParties] = useState<Party[]>([]);
+    const [rawMaterials, setRawMaterials] = useState<Item[]>([]);
     const [open, setOpen] = useState(false);
     const [editing, setEditing] = useState<InwardEntryType | null>(null);
     const [form, setForm] = useState<InwardForm>({ ...EMPTY_FORM });
@@ -92,13 +101,23 @@ export function InwardEntryList() {
 
     useEffect(() => collectionListener<InwardEntryType>("inwardEntries", "date", setEntries, "desc"), []);
     useEffect(() => collectionListener<Party>("parties", "name", setParties), []);
+    useEffect(() => collectionListener<Item>("items", "name", (all) =>
+        setRawMaterials(all.filter((i) => i.type === "raw_sand" || i.type === "coal"))
+    ), []);
 
     const net = parseFloat(form.grossWeight || "0") - parseFloat(form.tareWeight || "0");
     const amount = net * parseFloat(form.ratePerTon || "0");
 
     function openAdd() {
         setEditing(null);
-        setForm({ ...EMPTY_FORM, date: todayISO() });
+        const first = rawMaterials[0];
+        setForm({
+            ...EMPTY_FORM,
+            date: todayISO(),
+            itemId: first?.id ?? "",
+            itemName: first?.name ?? "",
+            materialType: first ? deriveMaterialType(first.type) : "sand",
+        });
         setOpen(true);
     }
 
@@ -110,6 +129,8 @@ export function InwardEntryList() {
             partyId: entry.partyId,
             partyName: entry.partyName,
             materialType: entry.materialType,
+            itemId: entry.itemId ?? "",
+            itemName: entry.itemName ?? entry.materialType,
             royaltyNumber: entry.royaltyNumber ?? "",
             royaltyWeight: String(entry.royaltyWeight),
             grossWeight: String(entry.grossWeight),
@@ -123,6 +144,7 @@ export function InwardEntryList() {
     async function handleSave() {
         if (!form.vehicleNumber.trim()) { toast.error("Vehicle number is required"); return; }
         if (!form.partyId) { toast.error("Party is required"); return; }
+        if (!form.itemId) { toast.error("Material is required"); return; }
         if (!form.grossWeight || !form.tareWeight) { toast.error("Gross and tare weights are required"); return; }
         if (!form.ratePerTon) { toast.error("Rate per ton is required"); return; }
         if (net <= 0) { toast.error("Net weight must be greater than zero"); return; }
@@ -135,6 +157,8 @@ export function InwardEntryList() {
                 partyId: form.partyId,
                 partyName: form.partyName,
                 materialType: form.materialType,
+                itemId: form.itemId,
+                itemName: form.itemName,
                 royaltyNumber: form.royaltyNumber.trim() || null,
                 royaltyWeight: parseFloat(form.royaltyWeight || "0"),
                 grossWeight: parseFloat(form.grossWeight),
@@ -305,13 +329,24 @@ export function InwardEntryList() {
                         <div className="space-y-1">
                             <Label>Material *</Label>
                             <Select
-                                value={form.materialType}
-                                onValueChange={(v) => v && setForm({ ...form, materialType: v as InwardMaterialType })}
+                                value={form.itemId}
+                                onValueChange={(v) => {
+                                    if (!v) return;
+                                    const item = rawMaterials.find((x) => x.id === v);
+                                    if (!item) return;
+                                    setForm({
+                                        ...form,
+                                        itemId: item.id,
+                                        itemName: item.name,
+                                        materialType: deriveMaterialType(item.type),
+                                    });
+                                }}
                             >
-                                <SelectTrigger><SelectValue /></SelectTrigger>
+                                <SelectTrigger><SelectValue placeholder="Select material…" /></SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="sand">Sand</SelectItem>
-                                    <SelectItem value="coal">Coal</SelectItem>
+                                    {rawMaterials.map((item) => (
+                                        <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>

@@ -66,7 +66,9 @@ export interface InwardEntry {
     vehicleNumber: string;
     partyId: string;
     partyName: string;
-    materialType: InwardMaterialType;
+    materialType: InwardMaterialType; // "sand" | "coal" — derived from item.type for filtering
+    itemId?: string;   // item id from masters
+    itemName?: string; // item display name from masters
     royaltyNumber?: string;
     royaltyWeight: number; // tons — from royalty slip
     grossWeight: number;   // tons
