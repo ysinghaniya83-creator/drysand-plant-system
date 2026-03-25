@@ -21,7 +21,6 @@ import {
     SelectContent,
     SelectItem,
     SelectTrigger,
-    SelectValue,
 } from "@/components/ui/select";
 import {
     Dialog,
@@ -318,7 +317,9 @@ export function InwardEntryList() {
                                     setForm({ ...form, partyId: v, partyName: p?.name ?? "" });
                                 }}
                             >
-                                <SelectTrigger><SelectValue placeholder="Select party…" /></SelectTrigger>
+                                <SelectTrigger>
+                                    <span className="truncate">{form.partyName || <span className="text-muted-foreground">Select party…</span>}</span>
+                                </SelectTrigger>
                                 <SelectContent>
                                     {parties.map((p) => (
                                         <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
@@ -342,7 +343,9 @@ export function InwardEntryList() {
                                     });
                                 }}
                             >
-                                <SelectTrigger><SelectValue placeholder="Select material…" /></SelectTrigger>
+                                <SelectTrigger>
+                                    <span className="truncate">{form.itemName || <span className="text-muted-foreground">Select material…</span>}</span>
+                                </SelectTrigger>
                                 <SelectContent>
                                     {rawMaterials.map((item) => (
                                         <SelectItem key={item.id} value={item.id}>{item.name}</SelectItem>
