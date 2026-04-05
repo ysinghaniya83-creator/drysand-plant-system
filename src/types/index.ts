@@ -200,6 +200,7 @@ export interface LooseSale {
     transportCost: number;
     totalAmount: number;
     invoiceNumber: string;
+    salesmanName?: string;
     createdAt: Timestamp;
     createdBy: string;
 }
@@ -221,6 +222,7 @@ export interface BagSale {
     transportCost: number;
     totalAmount: number;
     invoiceNumber: string;
+    salesmanName?: string;
     createdAt: Timestamp;
     createdBy: string;
 }

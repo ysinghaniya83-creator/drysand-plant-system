@@ -47,6 +47,7 @@ interface LooseSaleForm {
     netWeightTons: string;
     ratePerTon: string;
     transportCost: string;
+    salesmanName: string;
 }
 
 const EMPTY_FORM: LooseSaleForm = {
@@ -60,6 +61,7 @@ const EMPTY_FORM: LooseSaleForm = {
     netWeightTons: "",
     ratePerTon: "",
     transportCost: "0",
+    salesmanName: "",
 };
 
 export function LooseSaleList() {
@@ -81,8 +83,16 @@ export function LooseSaleList() {
         );
     }, []);
 
+    // Unique salesman names from past sales for autocomplete
+    const salesmanNames = Array.from(new Set(sales.map((s) => s.salesmanName).filter(Boolean))) as string[];
+
     const amount = parseFloat(form.netWeightTons || "0") * parseFloat(form.ratePerTon || "0");
     const totalAmount = amount + parseFloat(form.transportCost || "0");
+
+    function handlePartyInput(name: string) {
+        const match = parties.find((p) => p.name.toLowerCase() === name.toLowerCase());
+        setForm({ ...form, partyName: match ? match.name : name, partyId: match?.id ?? "" });
+    }
 
     function openAdd() {
         setEditing(null);
@@ -103,13 +113,14 @@ export function LooseSaleList() {
             netWeightTons: String(sale.netWeightTons),
             ratePerTon: String(sale.ratePerTon),
             transportCost: String(sale.transportCost),
+            salesmanName: sale.salesmanName ?? "",
         });
         setOpen(true);
     }
 
     async function handleSave() {
         if (!form.invoiceNumber.trim()) { toast.error("Invoice number is required"); return; }
-        if (!form.partyId) { toast.error("Party is required"); return; }
+        if (!form.partyId) { toast.error("Select a valid party from the list"); return; }
         if (!form.itemId) { toast.error("Item is required"); return; }
         if (!form.netWeightTons || !form.ratePerTon) { toast.error("Weight and rate are required"); return; }
 
@@ -135,6 +146,7 @@ export function LooseSaleList() {
                 amount: amt,
                 transportCost: transport,
                 totalAmount: total,
+                salesmanName: form.salesmanName.trim(),
                 createdBy: user?.uid || "",
             };
 
@@ -181,6 +193,7 @@ export function LooseSaleList() {
                             <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</TableHead>
                             <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Invoice #</TableHead>
                             <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Party</TableHead>
+                            <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Salesman</TableHead>
                             <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Item</TableHead>
                             <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Wt (T)</TableHead>
                             <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Rate</TableHead>
@@ -193,7 +206,7 @@ export function LooseSaleList() {
                     <TableBody>
                         {sales.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={10} className="text-center text-base text-muted-foreground py-10">
+                                <TableCell colSpan={11} className="text-center text-base text-muted-foreground py-10">
                                     No loose sales yet.
                                 </TableCell>
                             </TableRow>
@@ -203,6 +216,7 @@ export function LooseSaleList() {
                                 <TableCell className="text-sm font-mono">{formatDate(sale.date)}</TableCell>
                                 <TableCell className="font-semibold text-sm font-mono">{sale.invoiceNumber}</TableCell>
                                 <TableCell className="text-sm">{sale.partyName}</TableCell>
+                                <TableCell className="text-sm text-muted-foreground">{sale.salesmanName || "—"}</TableCell>
                                 <TableCell className="text-sm">{sale.itemName}</TableCell>
                                 <TableCell className="text-right font-mono text-sm">{sale.netWeightTons.toFixed(3)}</TableCell>
                                 <TableCell className="text-right font-mono text-sm">₹{sale.ratePerTon.toLocaleString("en-IN")}</TableCell>
@@ -237,18 +251,32 @@ export function LooseSaleList() {
                             <Label>Vehicle Number</Label>
                             <Input value={form.vehicleNumber} onChange={(e) => setForm({ ...form, vehicleNumber: e.target.value })} placeholder="GJ01AB1234" className="uppercase" />
                         </div>
+                        <div className="space-y-1">
+                            <Label>Salesman Name</Label>
+                            <Input
+                                list="loose-salesman-list"
+                                value={form.salesmanName}
+                                onChange={(e) => setForm({ ...form, salesmanName: e.target.value })}
+                                placeholder="Type salesman name…"
+                            />
+                            <datalist id="loose-salesman-list">
+                                {salesmanNames.map((n) => <option key={n} value={n} />)}
+                            </datalist>
+                        </div>
                         <div className="col-span-2 space-y-1">
-                            <Label>Party *</Label>
-                            <Select value={form.partyId} onValueChange={(v) => {
-                                if (!v) return;
-                                const p = parties.find((x) => x.id === v);
-                                setForm({ ...form, partyId: v, partyName: p?.name ?? "" });
-                            }}>
-                                <SelectTrigger><SelectValue placeholder="Select party…" /></SelectTrigger>
-                                <SelectContent>
-                                    {parties.map((p) => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
+                            <Label>Customer / Party *</Label>
+                            <Input
+                                list="loose-party-list"
+                                value={form.partyName}
+                                onChange={(e) => handlePartyInput(e.target.value)}
+                                placeholder="Type or select party…"
+                            />
+                            <datalist id="loose-party-list">
+                                {parties.map((p) => <option key={p.id} value={p.name} />)}
+                            </datalist>
+                            {form.partyName && !form.partyId && (
+                                <p className="text-xs text-amber-600">No matching party — add them in Masters → Parties first.</p>
+                            )}
                         </div>
                         <div className="col-span-2 space-y-1">
                             <Label>Item *</Label>
